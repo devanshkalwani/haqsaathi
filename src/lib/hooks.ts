@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { storage } from "./storage";
+import { storage, type LocalData } from "./storage";
 import type { Lang } from "./types";
 
 /** Saved schemes, kept in localStorage and shared across the page. */
@@ -20,8 +20,7 @@ export function useSaved() {
   const toggle = useCallback((id: string) => {
     const current = storage.getSaved();
     const next = current.includes(id) ? current.filter((x) => x !== id) : [...current, id];
-    storage.setSaved(next);
-    window.dispatchEvent(new Event("hs-saved-change"));
+    storage.setSaved(next); // also tells other components and the cloud sync
   }, []);
 
   return { saved, toggle, isSaved: (id: string) => saved.includes(id) };
@@ -109,4 +108,16 @@ export function useSpeak() {
 /** Format rupees the Indian way: 1,20,000 */
 export function formatINR(n: number) {
   return "₹" + n.toLocaleString("en-IN");
+}
+
+/** All of the user's data on this device. Updates when anything changes (including after login). */
+export function useLocalData() {
+  const [data, setData] = useState<LocalData | null>(null);
+  useEffect(() => {
+    const read = () => setData(storage.getAll());
+    read();
+    window.addEventListener("hs-storage-change", read);
+    return () => window.removeEventListener("hs-storage-change", read);
+  }, []);
+  return data; // null while loading
 }

@@ -72,6 +72,22 @@ The site now reads schemes from Supabase.
 
 ---
 
+## 7. Turn on user login (email code)
+
+Users log in with a 6-digit code sent to their email. No passwords. Guests can still use everything.
+
+1. **Update the tables:** open SQL Editor, paste the whole `supabase/schema.sql` again and click Run. It is safe to re-run; it adds the new `profiles` table.
+2. **Send a code, not a link:** Authentication → Emails → Templates → **Magic Link**. Replace the body with:
+   ```html
+   <h2>Your HaqSaathi login code</h2>
+   <p>Enter this code on HaqSaathi: <b style="font-size:24px">{{ .Token }}</b></p>
+   <p>If you did not ask for this, ignore this email.</p>
+   ```
+3. **Allow your website address:** Authentication → URL Configuration. Set **Site URL** to your Vercel address (for example `https://haqsaathi-lilac.vercel.app`) and add `http://localhost:3000/**` and `https://haqsaathi-lilac.vercel.app/**` to **Redirect URLs**.
+4. **Before real users:** Supabase's built-in email sends only a few emails per hour. Set up free custom SMTP (for example Resend) under Authentication → Emails → SMTP Settings.
+
+Login uses only `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`. If they are missing, the Log in button is hidden and the site works in guest mode.
+
 ## How it fits together
 
 ```
@@ -92,4 +108,6 @@ Browser ──► Next.js pages ──► src/lib/data.ts ──► Supabase (sc
 | `npm run db:seed` says "Could not find .env.local" | Create `.env.local` in the same folder as `package.json` |
 | Seed fails with "relation does not exist" | You skipped step 2. Run `schema.sql` in the SQL Editor |
 | Admin says "database is not connected" | Check all 3 Supabase values in `.env.local`, then restart `npm run dev` |
+| Login email has a link but no code | Do step 7.2 (add `{{ .Token }}` to the Magic Link template) |
+| "Email rate limit exceeded" | Wait an hour, or set up custom SMTP (step 7.4) |
 | Changes in `.env.local` don't apply | Always restart `npm run dev` after editing `.env.local` |

@@ -12,6 +12,7 @@ Independent (non-government) website helping Indians find and apply for governme
 - Eligibility is decided by `src/lib/eligibility.ts` (exact logic). AI is only for explaining, never for deciding eligibility.
 - Never collect Aadhaar numbers, OTPs, bank PINs or passwords. Never style the site to look like an official government site.
 - `SUPABASE_SERVICE_ROLE_KEY` / `adminDb()` only in server code. Every admin server action must call `requireAdmin()` first. After changing schemes, call `updateTag("schemes")`.
+- User login: `src/lib/auth.tsx` (`useAuth()`, Supabase email code). Everything must still work for guests. Device data lives in `src/lib/storage.ts`; always write through it so changes sync to the `profiles` table.
 - Database changes: edit `supabase/schema.sql` (keep it re-runnable) and keep `src/lib/mappers.ts` in sync.
 - Run `npm run lint` and `npm run build` before committing.
 

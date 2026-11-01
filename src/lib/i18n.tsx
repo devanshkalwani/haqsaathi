@@ -156,6 +156,68 @@ const UI = {
     en: "Development version: scheme data is a sample and must be verified before launch.",
     hi: "डेवलपमेंट संस्करण: योजना जानकारी नमूना है, लॉन्च से पहले जांचनी होगी।",
   },
+
+  // Account
+  nav_dashboard: { en: "My Dashboard", hi: "मेरा डैशबोर्ड" },
+  login: { en: "Log in", hi: "लॉग इन" },
+  logout: { en: "Log out", hi: "लॉग आउट" },
+  guest: { en: "Guest", hi: "मेहमान" },
+
+  // Login page
+  login_title: { en: "Welcome to HaqSaathi", hi: "हक़साथी में आपका स्वागत है" },
+  login_sub: {
+    en: "Log in to save your benefits and see them on any phone. No password needed.",
+    hi: "अपने लाभ सेव करने और किसी भी फोन पर देखने के लिए लॉग इन करें। पासवर्ड की ज़रूरत नहीं।",
+  },
+  email_label: { en: "Your email", hi: "आपका ईमेल" },
+  send_code: { en: "Send me a code", hi: "मुझे कोड भेजें" },
+  sending: { en: "Sending…", hi: "भेज रहे हैं…" },
+  code_sent: { en: "We sent a 6-digit code to", hi: "हमने 6 अंकों का कोड भेजा है" },
+  code_label: { en: "Enter the 6-digit code", hi: "6 अंकों का कोड डालें" },
+  code_hint: { en: "Check your inbox and spam folder. You can also tap the link in the email.", hi: "इनबॉक्स और स्पैम फ़ोल्डर देखें। ईमेल के लिंक पर भी टैप कर सकते हैं।" },
+  verify: { en: "Log in", hi: "लॉग इन करें" },
+  checking: { en: "Checking…", hi: "जांच रहे हैं…" },
+  change_email: { en: "Use a different email", hi: "दूसरा ईमेल डालें" },
+  continue_guest: { en: "Continue without login", hi: "बिना लॉग इन के आगे बढ़ें" },
+  guest_note: {
+    en: "Everything works without logging in. Your answers stay on this phone.",
+    hi: "लॉग इन के बिना भी सब कुछ चलता है। आपके जवाब इसी फोन में रहते हैं।",
+  },
+  name_title: { en: "What should we call you?", hi: "हम आपको किस नाम से बुलाएं?" },
+  name_ph: { en: "Your name", hi: "आपका नाम" },
+  continue: { en: "Continue", hi: "आगे बढ़ें" },
+  login_unavailable: {
+    en: "Login is coming soon. For now you can use everything as a guest.",
+    hi: "लॉग इन जल्द आ रहा है। अभी आप मेहमान के रूप में सब कुछ इस्तेमाल कर सकते हैं।",
+  },
+  login_perks_1: { en: "Your schemes saved on any phone", hi: "आपकी योजनाएं हर फोन पर सेव" },
+  login_perks_2: { en: "Track your documents and applications", hi: "दस्तावेज़ और आवेदन ट्रैक करें" },
+  login_perks_3: { en: "Get alerts for new schemes (coming soon)", hi: "नई योजनाओं की सूचना (जल्द)" },
+
+  // Dashboard
+  dash_hello: { en: "Namaste", hi: "नमस्ते" },
+  dash_sub: { en: "Here is everything HaqSaathi found for you.", hi: "हक़साथी ने आपके लिए यह सब ढूंढा है।" },
+  dash_eligible: { en: "Schemes for you", hi: "आपके लिए योजनाएं" },
+  dash_docs: { en: "Documents ready", hi: "तैयार दस्तावेज़" },
+  dash_saved: { en: "Saved schemes", hi: "सेव योजनाएं" },
+  dash_next: { en: "Your next steps", hi: "आपके अगले कदम" },
+  dash_step_profile: { en: "Answer 8 simple questions", hi: "8 आसान सवालों के जवाब दें" },
+  dash_step_save: { en: "Save the schemes you want", hi: "जो योजनाएं चाहिए, उन्हें सेव करें" },
+  dash_step_docs: { en: "Get your documents ready", hi: "अपने दस्तावेज़ तैयार करें" },
+  dash_step_apply: { en: "Apply on the official website", hi: "आधिकारिक वेबसाइट पर आवेदन करें" },
+  dash_top: { en: "Your top benefits", hi: "आपके सबसे बड़े लाभ" },
+  dash_profile: { en: "Your details", hi: "आपकी जानकारी" },
+  dash_guest_banner: {
+    en: "You are using HaqSaathi as a guest. Log in to keep your data safe and use it on any phone.",
+    hi: "आप मेहमान के रूप में हक़साथी इस्तेमाल कर रहे हैं। अपना डेटा सुरक्षित रखने और किसी भी फोन पर इस्तेमाल करने के लिए लॉग इन करें।",
+  },
+  dash_start_title: { en: "Let's find your benefits", hi: "आइए आपके लाभ ढूंढें" },
+  dash_start_sub: { en: "Answer 8 simple questions. It takes 2 minutes.", hi: "8 आसान सवालों के जवाब दें। सिर्फ 2 मिनट लगेंगे।" },
+  dash_ask: { en: "Have a question? Ask Saathi in Hindi or English.", hi: "कोई सवाल? हिंदी या अंग्रेज़ी में साथी से पूछें।" },
+  view_all: { en: "View all", hi: "सभी देखें" },
+  edit: { en: "Edit", hi: "बदलें" },
+  done: { en: "Done", hi: "पूरा" },
+  years: { en: "years", hi: "वर्ष" },
 } satisfies Record<string, L>;
 
 export type UIKey = keyof typeof UI;

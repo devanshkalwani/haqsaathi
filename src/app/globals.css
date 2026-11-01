@@ -14,6 +14,27 @@
   --color-accent-500: #f59e0b;
   --color-ink: #1f2933;
   --color-paper: #fbfaf7;
+  /* Animations (use as animate-float, animate-float-slow, ...) */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-float-delay: float 7s ease-in-out 1.5s infinite;
+  --animate-spin-slow: spin 24s linear infinite;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+  --animate-shine: shine 3.5s ease-in-out infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-14px) rotate(var(--r, 0deg)); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shine {
+    0% { background-position: -200% 0; }
+    60%, 100% { background-position: 200% 0; }
+  }
+
   --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", "Nirmala UI", Arial, sans-serif;
 }
 
@@ -29,4 +50,23 @@ button, a, input, select {
 
 @media print {
   header, footer, nav, .no-print { display: none !important; }
+}
+
+/* Subtle dotted grid used behind hero sections */
+.bg-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* 3D tilt helpers */
+.perspective { perspective: 1200px; }
+.preserve-3d { transform-style: preserve-3d; }
+
+/* Respect people who turn off animations (also saves battery on cheap phones) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

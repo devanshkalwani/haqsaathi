@@ -76,3 +76,38 @@ create policy "public can read documents" on public.documents
 drop policy if exists "public can report errors" on public.error_reports;
 create policy "public can report errors" on public.error_reports
   for insert with check (status = 'open');
+
+-- ============ USER PROFILES (added for login + dashboard) ============
+-- One row per logged-in user. Users can only see and change their own row.
+create table if not exists public.profiles (
+  id          uuid primary key references auth.users(id) on delete cascade,
+  name        text check (char_length(name) <= 80),
+  answers     jsonb,                                -- quiz answers (see Profile in src/lib/types.ts)
+  saved       text[] not null default '{}',         -- saved scheme ids
+  docs_ready  text[] not null default '{}',         -- document ids the user has ready
+  language    text not null default 'en' check (language in ('en', 'hi')),
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+drop trigger if exists profiles_touch on public.profiles;
+create trigger profiles_touch before update on public.profiles
+  for each row execute function public.touch_updated_at();
+
+alter table public.profiles enable row level security;
+
+drop policy if exists "users read own profile" on public.profiles;
+create policy "users read own profile" on public.profiles
+  for select using (auth.uid() = id);
+
+drop policy if exists "users create own profile" on public.profiles;
+create policy "users create own profile" on public.profiles
+  for insert with check (auth.uid() = id);
+
+drop policy if exists "users update own profile" on public.profiles;
+create policy "users update own profile" on public.profiles
+  for update using (auth.uid() = id) with check (auth.uid() = id);
+
+drop policy if exists "users delete own profile" on public.profiles;
+create policy "users delete own profile" on public.profiles
+  for delete using (auth.uid() = id);

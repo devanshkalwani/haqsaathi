@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLang, type UIKey } from "@/lib/i18n";
+import AccountButton from "./AccountButton";
 import LanguageToggle from "./LanguageToggle";
 
-const NAV: { href: string; key: UIKey; icon: string }[] = [
-  { href: "/", key: "nav_home", icon: "🏠" },
+const NAV: { href: string; key: UIKey; icon: string; short?: UIKey }[] = [
+  { href: "/dashboard", key: "nav_dashboard", icon: "🏠", short: "nav_home" },
   { href: "/check", key: "nav_check", icon: "✅" },
   { href: "/schemes", key: "nav_schemes", icon: "📚" },
   { href: "/ask", key: "nav_ask", icon: "💬" },
@@ -16,7 +17,7 @@ const NAV: { href: string; key: UIKey; icon: string }[] = [
 export default function Header() {
   const { t } = useLang();
   const path = usePathname();
-  const isActive = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+  const isActive = (href: string) => path.startsWith(href);
 
   return (
     <>
@@ -25,13 +26,13 @@ export default function Header() {
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
           <Link href="/" className="flex items-center gap-2">
             <Logo />
-            <span className="text-xl font-extrabold tracking-tight text-brand-800">
+            <span className="hidden text-xl font-extrabold tracking-tight text-brand-800 min-[360px]:inline">
               Haq<span className="text-accent-500">Saathi</span>
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {NAV.slice(1).map((n) => (
+          <nav className="hidden items-center gap-1 lg:flex">
+            {NAV.map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
@@ -44,7 +45,10 @@ export default function Header() {
             ))}
           </nav>
 
-          <LanguageToggle />
+          <div className="flex shrink-0 items-center gap-2">
+            <LanguageToggle />
+            <AccountButton />
+          </div>
         </div>
       </header>
 
@@ -61,7 +65,7 @@ export default function Header() {
             <span className="text-lg" aria-hidden>
               {n.icon}
             </span>
-            {t(n.key)}
+            {t(n.short ?? n.key)}
           </Link>
         ))}
       </nav>
