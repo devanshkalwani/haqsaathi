@@ -83,7 +83,6 @@ const UI = {
   },
   results_no_profile: { en: "You haven't answered the questions yet.", hi: "आपने अभी सवालों के जवाब नहीं दिए हैं।" },
   edit_answers: { en: "Change answers", hi: "जवाब बदलें" },
-  total_value: { en: "Possible support worth up to", hi: "संभावित मदद, कुल मिलाकर" },
 
   // Scheme card / detail
   likely_eligible: { en: "Likely eligible", hi: "संभवतः पात्र" },
@@ -100,6 +99,8 @@ const UI = {
   source: { en: "Official source", hi: "आधिकारिक स्रोत" },
   last_verified: { en: "Last checked", hi: "आखिरी जांच" },
   report_error: { en: "Report a mistake", hi: "गलती बताएं" },
+  report_what: { en: "What is wrong? (e.g. amount changed, link broken)", hi: "क्या गलत है? (जैसे राशि बदल गई, लिंक नहीं चलता)" },
+  cancel: { en: "Cancel", hi: "रद्द करें" },
   report_thanks: { en: "Thank you! We will check and fix it.", hi: "धन्यवाद! हम जांच कर सुधारेंगे।" },
   listen: { en: "Listen", hi: "सुनें" },
   stop: { en: "Stop", hi: "रोकें" },

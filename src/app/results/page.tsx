@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import SchemeCard from "@/components/SchemeCard";
-import { SCHEMES } from "@/data/schemes";
+import { useData } from "@/lib/data-context";
 import { findEligible } from "@/lib/eligibility";
 import { useLang } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
@@ -11,6 +11,7 @@ import type { Profile } from "@/lib/types";
 
 export default function ResultsPage() {
   const { t } = useLang();
+  const { schemes: SCHEMES } = useData();
   const [profile, setProfile] = useState<Profile | null | undefined>(undefined);
 
   useEffect(() => {
