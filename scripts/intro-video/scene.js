@@ -6,7 +6,7 @@ const HI = LANG === "hi";
 const W = 1280, H = 720;
 const FONT = HI ? "'Noto Sans Devanagari', 'Jakarta'" : "'Jakarta', 'Noto Sans Devanagari'";
 
-const NAVY = 0x0a1430, MARIGOLD = 0xf2b544;
+const MARIGOLD = 0xf2b544;
 
 // ---------- helpers ----------
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
