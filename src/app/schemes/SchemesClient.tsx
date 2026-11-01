@@ -8,6 +8,8 @@ import { useData } from "@/lib/data-context";
 import { useLang } from "@/lib/i18n";
 import { searchSchemes } from "@/lib/search";
 import type { SchemeCategory } from "@/lib/types";
+import OptionIcon from "@/components/Icon";
+import { Search } from "lucide-react";
 
 export default function SchemesClient() {
   const initialCat = (useSearchParams().get("category") as SchemeCategory | null) ?? null;
@@ -29,7 +31,7 @@ export default function SchemesClient() {
 
       {/* Search */}
       <div className="relative mt-5">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-xl">🔎</span>
+        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><Search className="h-5 w-5" /></span>
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -45,7 +47,7 @@ export default function SchemesClient() {
         </Chip>
         {SCHEME_CATEGORIES.map((c) => (
           <Chip key={c.id} active={category === c.id} onClick={() => setCategory(c.id)}>
-            {c.icon} {tr(c.label)}
+            <OptionIcon id={c.id} className="h-4 w-4" /> {tr(c.label)}
           </Chip>
         ))}
       </div>

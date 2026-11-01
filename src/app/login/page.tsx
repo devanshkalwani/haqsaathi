@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useLang } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
+import { BellRing, ClipboardCheck, MailCheck, Smartphone, UserRound } from "lucide-react";
+import Logo from "@/components/Logo";
 
 type Step = "email" | "code" | "name";
 
@@ -53,19 +55,22 @@ export default function LoginPage() {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--color-brand-100),_transparent_60%)]" />
+      
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-2 md:py-16">
         {/* Left: why log in */}
-        <div className="relative hidden overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-800 to-brand-600 p-10 text-white md:block">
-          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-accent-400/30 blur-3xl" />
-          <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-brand-200/20 blur-3xl" />
-          <p className="text-5xl">🤝</p>
-          <h2 className="mt-6 text-3xl font-extrabold leading-tight">{t("login_title")}</h2>
-          <p className="mt-3 text-white/80">{t("tagline")}</p>
-          <ul className="mt-8 space-y-4">
+        <div className="relative hidden overflow-hidden rounded-2xl bg-brand-950 p-10 text-white md:block">
+          <div className="bg-grid pointer-events-none absolute inset-0" />
+          <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-700/60 blur-[90px]" />
+          <span className="relative block"><Logo size={48} /></span>
+          <h2 className="relative mt-6 text-3xl font-extrabold leading-tight">{t("login_title")}</h2>
+          <p className="relative mt-3 text-brand-100/80">{t("tagline")}</p>
+          <ul className="relative mt-8 space-y-3">
             {(["login_perks_1", "login_perks_2", "login_perks_3"] as const).map((k, i) => (
-              <li key={k} className="flex items-center gap-3 rounded-2xl bg-white/10 p-4 backdrop-blur">
-                <span className="text-2xl">{["📱", "📋", "🔔"][i]}</span>
+              <li key={k} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                {(() => {
+                  const Icon = [Smartphone, ClipboardCheck, BellRing][i];
+                  return <Icon className="h-5 w-5 shrink-0 text-accent-400" />;
+                })()}
                 <span className="font-medium">{t(k)}</span>
               </li>
             ))}
@@ -73,7 +78,7 @@ export default function LoginPage() {
         </div>
 
         {/* Right: the form */}
-        <div className="flex flex-col justify-center rounded-[2rem] border border-black/5 bg-white p-6 shadow-xl shadow-brand-900/5 md:p-10">
+        <div className="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-brand-900/5 md:p-10">
           {!available ? (
             <div>
               <h1 className="text-2xl font-extrabold">{t("login_title")}</h1>
@@ -92,15 +97,15 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@gmail.com"
-                className="mt-2 w-full rounded-2xl border-2 border-gray-200 px-5 py-4 text-lg outline-none focus:border-brand-600"
+                className="mt-2 w-full rounded-xl border-2 border-slate-200 px-5 py-4 text-lg outline-none focus:border-brand-600"
               />
-              <button disabled={busy} className="mt-4 w-full rounded-2xl bg-brand-700 py-4 text-lg font-bold text-white transition hover:bg-brand-800 disabled:opacity-60">
+              <button disabled={busy} className="mt-4 w-full rounded-xl bg-brand-900 py-4 text-lg font-bold text-white transition hover:bg-brand-800 disabled:opacity-60">
                 {busy ? t("sending") : `${t("send_code")} →`}
               </button>
             </form>
           ) : step === "code" ? (
             <form onSubmit={submitCode}>
-              <p className="text-4xl">📩</p>
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><MailCheck className="h-6 w-6" /></span>
               <h1 className="mt-3 text-2xl font-extrabold">{t("code_label")}</h1>
               <p className="mt-2 text-gray-600">
                 {t("code_sent")} <b>{email}</b>
@@ -114,12 +119,12 @@ export default function LoginPage() {
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="••••••"
-                className="mt-6 w-full rounded-2xl border-2 border-gray-200 px-5 py-4 text-center text-3xl font-bold tracking-[0.5em] outline-none focus:border-brand-600"
+                className="mt-6 w-full rounded-xl border-2 border-slate-200 px-5 py-4 text-center text-3xl font-bold tracking-[0.5em] outline-none focus:border-brand-600"
               />
               <p className="mt-2 text-sm text-gray-500">{t("code_hint")}</p>
               <button
                 disabled={busy || code.length < 6}
-                className="mt-4 w-full rounded-2xl bg-brand-700 py-4 text-lg font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
+                className="mt-4 w-full rounded-xl bg-brand-900 py-4 text-lg font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
               >
                 {busy ? t("checking") : t("verify")}
               </button>
@@ -137,7 +142,7 @@ export default function LoginPage() {
             </form>
           ) : (
             <form onSubmit={submitName}>
-              <p className="text-4xl">🙏</p>
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><UserRound className="h-6 w-6" /></span>
               <h1 className="mt-3 text-2xl font-extrabold">{t("name_title")}</h1>
               <input
                 autoFocus
@@ -146,13 +151,13 @@ export default function LoginPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t("name_ph")}
-                className="mt-6 w-full rounded-2xl border-2 border-gray-200 px-5 py-4 text-lg outline-none focus:border-brand-600"
+                className="mt-6 w-full rounded-xl border-2 border-slate-200 px-5 py-4 text-lg outline-none focus:border-brand-600"
               />
-              <button className="mt-4 w-full rounded-2xl bg-brand-700 py-4 text-lg font-bold text-white hover:bg-brand-800">{t("continue")} →</button>
+              <button className="mt-4 w-full rounded-xl bg-brand-900 py-4 text-lg font-bold text-white hover:bg-brand-800">{t("continue")} →</button>
             </form>
           )}
 
-          {error && <p className="mt-4 rounded-xl bg-rose-50 p-3 text-sm font-semibold text-rose-700">⚠️ {error}</p>}
+          {error && <p className="mt-4 rounded-xl bg-rose-50 p-3 text-sm font-semibold text-rose-700">{error}</p>}
 
           {step !== "name" && (
             <div className="mt-8 border-t border-gray-100 pt-6 text-center">

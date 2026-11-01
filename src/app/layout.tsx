@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
+import "@fontsource-variable/plus-jakarta-sans";
+import "@fontsource/noto-sans-devanagari/devanagari-400.css";
+import "@fontsource/noto-sans-devanagari/devanagari-600.css";
+import "@fontsource/noto-sans-devanagari/devanagari-700.css";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f766e",
+  themeColor: "#10214a",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

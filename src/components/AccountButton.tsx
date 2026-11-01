@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useAuth } from "@/lib/auth";
 import { useLocalData } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
+import { LayoutDashboard, LogOut } from "lucide-react";
 
 /** Top-right account control: "Log in" for guests, an avatar with a small menu for logged-in users. */
 export default function AccountButton() {
@@ -32,7 +33,7 @@ export default function AccountButton() {
 
   if (!user) {
     return (
-      <Link href="/login" className="whitespace-nowrap rounded-full bg-brand-700 px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-brand-800">
+      <Link href="/login" className="whitespace-nowrap rounded-lg bg-brand-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800">
         {t("login")}
       </Link>
     );
@@ -45,9 +46,9 @@ export default function AccountButton() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={label}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-800 text-base font-extrabold uppercase text-white ring-2 ring-accent-400/60"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-900 text-base font-bold uppercase text-accent-400 ring-2 ring-brand-100"
       >
-        {label.charAt(0) || "🙂"}
+        {label.charAt(0) || "U"}
       </button>
       {open && (
         <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-xl">
@@ -56,7 +57,7 @@ export default function AccountButton() {
             <p className="truncate text-xs text-gray-500">{user.email}</p>
           </div>
           <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-3 font-semibold text-gray-700 hover:bg-gray-50">
-            🏠 {t("nav_dashboard")}
+            <LayoutDashboard className="mr-2 inline h-4 w-4" />{t("nav_dashboard")}
           </Link>
           <button
             onClick={async () => {
@@ -66,7 +67,7 @@ export default function AccountButton() {
             }}
             className="block w-full px-4 py-3 text-left font-semibold text-rose-700 hover:bg-rose-50"
           >
-            ↩ {t("logout")}
+            <LogOut className="mr-2 inline h-4 w-4" />{t("logout")}
           </button>
         </div>
       )}

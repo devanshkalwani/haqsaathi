@@ -2,18 +2,24 @@
 
 /* Design tokens: change colours here and the whole app updates. */
 @theme {
-  --color-brand-50: #f0fdfa;
-  --color-brand-100: #ccfbf1;
-  --color-brand-200: #99f6e4;
-  --color-brand-500: #14b8a6;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-ink: #1f2933;
-  --color-paper: #fbfaf7;
+  /* Brand: deep navy (trust) + marigold (warmth). Not the national flag colours. */
+  --color-brand-50: #f2f5fb;
+  --color-brand-100: #e1e8f5;
+  --color-brand-200: #c2d0ea;
+  --color-brand-300: #93abd6;
+  --color-brand-500: #3d5fae;
+  --color-brand-600: #2c4c99;
+  --color-brand-700: #213d82;
+  --color-brand-800: #182f66;
+  --color-brand-900: #10214a;
+  --color-brand-950: #0a1430;
+  --color-accent-50: #fdf6e7;
+  --color-accent-100: #fbe9c2;
+  --color-accent-400: #f2b544;
+  --color-accent-500: #e09b21;
+  --color-accent-700: #9a5f0c;
+  --color-ink: #0f172a;
+  --color-paper: #f7f6f2;
   /* Animations (use as animate-float, animate-float-slow, ...) */
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-slow: float 9s ease-in-out infinite;
@@ -35,7 +41,7 @@
     60%, 100% { background-position: 200% 0; }
   }
 
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", "Nirmala UI", Arial, sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Noto Sans Devanagari", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Nirmala UI", Arial, sans-serif;
 }
 
 body {
@@ -52,11 +58,19 @@ button, a, input, select {
   header, footer, nav, .no-print { display: none !important; }
 }
 
-/* Subtle dotted grid used behind hero sections */
+/* Fine line grid used behind dark hero sections, fading out at the edges */
 .bg-grid {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px);
-  background-size: 22px 22px;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%);
 }
+
+/* Hindi text needs a little more line height */
+:lang(hi) { line-height: 1.6; }
+h1, h2, h3 { letter-spacing: -0.02em; }
+:lang(hi) h1, :lang(hi) h2, :lang(hi) h3 { letter-spacing: 0; }
 
 /* 3D tilt helpers */
 .perspective { perspective: 1200px; }

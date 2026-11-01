@@ -1,18 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import HeroScene from "@/components/HeroScene";
+import {
+  ArrowRight,
+  BadgeCheck,
+  Check,
+  FileCheck2,
+  IndianRupee,
+  LayoutDashboard,
+  ListChecks,
+  Lock,
+  LogIn,
+  PlayCircle,
+  Plus,
+  Quote,
+  SearchCheck,
+  ShieldCheck,
+  Smartphone,
+  SquareArrowOutUpRight,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import OptionIcon from "@/components/Icon";
+import IntroVideo from "@/components/IntroVideo";
 import SchemeCard from "@/components/SchemeCard";
 import { SCHEME_CATEGORIES } from "@/data/options";
 import { useAuth } from "@/lib/auth";
 import { useData } from "@/lib/data-context";
 import { useLang, type UIKey } from "@/lib/i18n";
 
-const STEPS: { icon: string; t: UIKey; d: UIKey }[] = [
-  { icon: "🔎", t: "step1_t", d: "step1_d" },
-  { icon: "📖", t: "step2_t", d: "step2_d" },
-  { icon: "📄", t: "step3_t", d: "step3_d" },
-  { icon: "✅", t: "step4_t", d: "step4_d" },
+const STEPS: { icon: LucideIcon; t: UIKey; d: UIKey }[] = [
+  { icon: SearchCheck, t: "step1_t", d: "step1_d" },
+  { icon: ListChecks, t: "step2_t", d: "step2_d" },
+  { icon: FileCheck2, t: "step3_t", d: "step3_d" },
+  { icon: SquareArrowOutUpRight, t: "step4_t", d: "step4_d" },
 ];
 
 const POPULAR = ["ayushman-bharat", "pm-kisan", "e-shram", "pmay-gramin", "post-matric-sc", "atal-pension"];
@@ -20,7 +41,18 @@ const POPULAR = ["ayushman-bharat", "pm-kisan", "e-shram", "pmay-gramin", "post-
 /** Text used only on the home page, in both languages. */
 const C = {
   en: {
-    badge: "Free · Hindi & English · No middlemen",
+    badge: "Independent · Free · Hindi & English",
+    h1a: "Find the government benefits",
+    h1b: "you deserve.",
+    watch: "12-second intro",
+    kpiQ: "simple questions",
+    kpiT: "minutes to see results",
+    kpiS: "schemes explained",
+    kpiC: "cost, always",
+    whatEyebrow: "About HaqSaathi",
+    helpsTitle: "Made for every Indian family",
+    helpsSub: "Farmers, workers, students, women, elders and small business owners. Pick what fits you.",
+    trustSub: "Built for safety from day one.",
     title1: "Your rights.",
     title2: "Your benefits.",
     title3: "Made simple.",
@@ -47,7 +79,8 @@ const C = {
     ],
     storyQuote:
       "My husband works on construction sites and my daughter is in Class 10. I didn't know we could get a scholarship, a worker card and free hospital treatment.",
-    storyName: "Sunita, domestic worker (example)",
+    storyName: "Sunita, domestic worker",
+    storyNote: "Illustrative example",
     howTitle: "Four simple steps",
     faqTitle: "Common questions",
     faq: [
@@ -61,7 +94,18 @@ const C = {
     ctaSub: "2 minutes. Free. In your language.",
   },
   hi: {
-    badge: "मुफ्त · हिंदी और अंग्रेज़ी · कोई बिचौलिया नहीं",
+    badge: "स्वतंत्र · मुफ्त · हिंदी और अंग्रेज़ी",
+    h1a: "अपने हक़ की सरकारी योजनाएं",
+    h1b: "आसानी से पाएं।",
+    watch: "12 सेकंड का परिचय",
+    kpiQ: "आसान सवाल",
+    kpiT: "मिनट में नतीजे",
+    kpiS: "योजनाएं आसान भाषा में",
+    kpiC: "खर्च, हमेशा",
+    whatEyebrow: "हक़साथी के बारे में",
+    helpsTitle: "हर भारतीय परिवार के लिए",
+    helpsSub: "किसान, मज़दूर, छात्र, महिलाएं, बुज़ुर्ग और छोटे व्यापारी। जो आप पर लागू हो, चुनें।",
+    trustSub: "पहले दिन से सुरक्षा का ध्यान।",
     title1: "आपका हक़।",
     title2: "आपके लाभ।",
     title3: "अब आसान।",
@@ -88,7 +132,8 @@ const C = {
     ],
     storyQuote:
       "मेरे पति निर्माण स्थल पर काम करते हैं और बेटी 10वीं में है। मुझे नहीं पता था कि हमें छात्रवृत्ति, श्रमिक कार्ड और मुफ्त इलाज मिल सकता है।",
-    storyName: "सुनीता, घरेलू कामगार (उदाहरण)",
+    storyName: "सुनीता, घरेलू कामगार",
+    storyNote: "उदाहरण के लिए",
     howTitle: "चार आसान कदम",
     faqTitle: "आम सवाल",
     faq: [
@@ -113,146 +158,171 @@ export default function HomePage() {
   return (
     <div className="overflow-x-hidden">
       {/* ---------------- Hero ---------------- */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-800 to-brand-700 text-white">
-        <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
-        <div className="animate-float-slow pointer-events-none absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-accent-400/20 blur-3xl" />
-        <div className="animate-float-delay pointer-events-none absolute -bottom-40 -left-24 h-[26rem] w-[26rem] rounded-full bg-brand-500/30 blur-3xl" />
+      <section className="relative overflow-hidden bg-brand-950 text-white">
+        <div className="bg-grid pointer-events-none absolute inset-0" />
+        <div className="pointer-events-none absolute left-1/2 top-0 h-[36rem] w-[60rem] -translate-x-1/2 rounded-full bg-brand-700/40 blur-[120px]" />
+        <div className="pointer-events-none absolute -right-40 bottom-0 h-80 w-80 rounded-full bg-accent-400/10 blur-[100px]" />
 
-        <div className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pb-16 pt-12 md:grid-cols-2 md:pb-24 md:pt-20">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-28 pt-12 md:pt-20 lg:grid-cols-[1.05fr_1fr]">
           <div className="animate-fade-up">
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-accent-400" /> {c.badge}
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-brand-100">
+              <ShieldCheck className="h-4 w-4 text-accent-400" /> {c.badge}
             </p>
-            <h1 className="mt-6 text-4xl font-extrabold leading-[1.1] sm:text-5xl md:text-6xl">
-              {c.title1}
-              <br />
-              {c.title2}
-              <br />
-              <span className="bg-gradient-to-r from-accent-400 to-amber-200 bg-clip-text text-transparent">{c.title3}</span>
+            <h1 className="mt-6 text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-[3.4rem]">
+              {c.h1a} <span className="text-accent-400">{c.h1b}</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg text-white/80">{c.sub}</p>
-            <div className="mt-8 flex flex-wrap items-center gap-3">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-brand-100/85">{c.sub}</p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/check"
-                className="rounded-2xl bg-accent-400 px-7 py-4 text-lg font-bold text-brand-900 shadow-lg shadow-accent-400/30 transition hover:-translate-y-0.5 hover:bg-accent-500"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-accent-400 px-7 py-4 text-lg font-bold text-brand-950 shadow-lg shadow-accent-400/20 transition hover:bg-accent-500"
               >
-                {t("hero_cta")} →
+                {t("hero_cta")}
+                <ArrowRight className="h-5 w-5 transition group-hover:translate-x-0.5" />
               </Link>
               <Link
                 href={user ? "/dashboard" : "/login"}
-                className="rounded-2xl border border-white/30 bg-white/5 px-6 py-4 font-semibold backdrop-blur transition hover:bg-white/15"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 px-6 py-4 font-semibold text-white transition hover:bg-white/10"
               >
-                {user ? `📊 ${t("nav_dashboard")}` : `🔐 ${t("login")}`}
+                {user ? <LayoutDashboard className="h-5 w-5" /> : <LogIn className="h-5 w-5" />}
+                {user ? t("nav_dashboard") : t("login")}
               </Link>
             </div>
-            <p className="mt-4 text-sm text-white/60">⏱️ {t("hero_cta_time")}</p>
+            <ul className="mt-8 grid gap-2.5 text-sm text-brand-100/80 sm:grid-cols-3">
+              {(["trust_2", "trust_1", "stat_free"] as const).map((k, i) => {
+                const Icon = [Lock, BadgeCheck, IndianRupee][i];
+                return (
+                  <li key={k} className="flex items-start gap-2">
+                    <Icon className="mt-0.5 h-4 w-4 shrink-0 text-accent-400" />
+                    {t(k)}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
 
-          <HeroScene />
+          <div className="animate-fade-up [animation-delay:150ms]">
+            <IntroVideo />
+            <p className="mt-3 flex items-center justify-center gap-2 text-sm text-brand-100/70">
+              <PlayCircle className="h-4 w-4" /> {c.watch}
+            </p>
+          </div>
         </div>
+      </section>
 
-        {/* Wave into the page */}
-        <svg className="absolute bottom-0 left-0 w-full text-paper" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden>
-          <path fill="currentColor" d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z" />
-        </svg>
+      {/* ---------------- Key numbers (overlapping the hero) ---------------- */}
+      <section className="relative z-10 mx-auto -mt-14 max-w-6xl px-4">
+        <div className="grid grid-cols-2 divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-brand-900/5 md:grid-cols-4 md:divide-x">
+          <Kpi big="8" small={c.kpiQ} />
+          <Kpi big="2" small={c.kpiT} />
+          <Kpi big={`${schemes.length}+`} small={c.kpiS} />
+          <Kpi big="₹0" small={c.kpiC} />
+        </div>
       </section>
 
       {/* ---------------- What is HaqSaathi ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-12">
-        <div className="grid items-center gap-8 rounded-[2rem] border border-black/5 bg-white p-6 shadow-sm md:grid-cols-[1fr_1.4fr] md:p-10">
-          <div className="flex items-center gap-4">
-            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-brand-700 text-3xl shadow-lg shadow-brand-700/30">🤝</span>
-            <h2 className="text-2xl font-extrabold md:text-3xl">{c.whatTitle}</h2>
+      <section className="mx-auto max-w-6xl px-4 pt-24">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
+          <div>
+            <Eyebrow>{c.whatEyebrow}</Eyebrow>
+            <h2 className="mt-3 text-3xl font-extrabold text-brand-950 md:text-4xl">{c.whatTitle}</h2>
+            <p className="mt-5 text-lg leading-relaxed text-slate-600">{c.whatBody}</p>
           </div>
-          <p className="text-lg leading-relaxed text-gray-700">{c.whatBody}</p>
-        </div>
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <Stat big={`${schemes.length}+`} small={t("stat_schemes")} />
-          <Stat big="₹0" small={t("stat_free")} />
-          <Stat big="अ / A" small={t("stat_lang")} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {STEPS.map((s, i) => (
+              <div key={s.t} className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-brand-200 hover:shadow-lg hover:shadow-brand-900/5">
+                <div className="flex items-center justify-between">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-700">
+                    <s.icon className="h-5 w-5" strokeWidth={1.8} />
+                  </span>
+                  <span className="text-sm font-bold text-slate-300">0{i + 1}</span>
+                </div>
+                <h3 className="mt-4 text-lg font-bold text-brand-950">{t(s.t)}</h3>
+                <p className="mt-1 text-slate-600">{t(s.d)}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ---------------- Before / After ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <h2 className="text-center text-3xl font-extrabold">{c.lifeTitle}</h2>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <div className="rounded-[2rem] border border-rose-100 bg-rose-50/60 p-6 md:p-8">
-            <p className="text-lg font-bold text-rose-800">😟 {c.before}</p>
-            <ul className="mt-4 space-y-3">
+      <section className="mx-auto max-w-6xl px-4 pt-24">
+        <h2 className="text-center text-3xl font-extrabold text-brand-950 md:text-4xl">{c.lifeTitle}</h2>
+        <div className="mt-10 grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
+            <p className="text-sm font-bold uppercase tracking-wider text-slate-400">{c.before}</p>
+            <ul className="mt-5 space-y-4">
               {c.beforeList.map((x) => (
-                <li key={x} className="flex gap-3 text-gray-700">
-                  <span className="mt-0.5 text-rose-500">✕</span>
+                <li key={x} className="flex gap-3 text-slate-600">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-500">
+                    <X className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  </span>
                   {x}
                 </li>
               ))}
             </ul>
           </div>
-          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-700 to-brand-600 p-6 text-white shadow-xl shadow-brand-700/20 md:p-8">
-            <div className="animate-float-slow absolute -right-10 -top-10 h-40 w-40 rounded-full bg-accent-400/25 blur-2xl" />
-            <p className="relative text-lg font-bold">😊 {c.after}</p>
-            <ul className="relative mt-4 space-y-3">
+          <div className="relative overflow-hidden rounded-2xl bg-brand-900 p-6 text-white md:p-8">
+            <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-accent-400/15 blur-3xl" />
+            <p className="relative text-sm font-bold uppercase tracking-wider text-accent-400">{c.after}</p>
+            <ul className="relative mt-5 space-y-4">
               {c.afterList.map((x) => (
                 <li key={x} className="flex gap-3">
-                  <span className="mt-0.5 text-accent-400">✔</span>
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-400 text-brand-950">
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
                   {x}
                 </li>
               ))}
             </ul>
           </div>
         </div>
-        <figure className="mx-auto mt-6 max-w-3xl rounded-[2rem] bg-amber-50 p-6 text-center">
-          <blockquote className="text-lg italic text-amber-950">“{c.storyQuote}”</blockquote>
-          <figcaption className="mt-3 text-sm font-semibold text-amber-800">— {c.storyName}</figcaption>
+        <figure className="mx-auto mt-6 flex max-w-3xl gap-4 rounded-2xl border border-slate-200 bg-white p-6">
+          <Quote className="h-8 w-8 shrink-0 text-accent-400" />
+          <div>
+            <blockquote className="text-lg leading-relaxed text-slate-700">{c.storyQuote}</blockquote>
+            <figcaption className="mt-3 text-sm">
+              <span className="font-bold text-brand-900">{c.storyName}</span>
+              <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">{c.storyNote}</span>
+            </figcaption>
+          </div>
         </figure>
       </section>
 
-      {/* ---------------- How it works ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <h2 className="text-center text-3xl font-extrabold">{c.howTitle}</h2>
-        <div className="relative mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div className="absolute left-[12%] right-[12%] top-8 hidden h-0.5 bg-gradient-to-r from-brand-200 via-brand-500 to-accent-400 md:block" />
-          {STEPS.map((s, i) => (
-            <div key={s.t} className="relative flex flex-col items-center text-center">
-              <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-black/5 bg-white text-3xl shadow-md">
-                {s.icon}
-                <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand-700 text-xs font-bold text-white">
-                  {i + 1}
-                </span>
-              </span>
-              <h3 className="mt-4 text-lg font-bold">{t(s.t)}</h3>
-              <p className="mt-1 text-sm text-gray-600">{t(s.d)}</p>
-            </div>
-          ))}
+      {/* ---------------- Who it helps ---------------- */}
+      <section className="mx-auto max-w-6xl px-4 pt-24">
+        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Eyebrow>{t("browse_title")}</Eyebrow>
+            <h2 className="mt-3 text-3xl font-extrabold text-brand-950">{c.helpsTitle}</h2>
+            <p className="mt-2 text-slate-600">{c.helpsSub}</p>
+          </div>
         </div>
-      </section>
-
-      {/* ---------------- Categories ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <h2 className="text-2xl font-extrabold">{t("browse_title")}</h2>
-        <div className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-5 md:grid-cols-9">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {SCHEME_CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
               href={`/schemes?category=${cat.id}`}
-              className="group flex flex-col items-center gap-2 rounded-2xl border border-black/5 bg-white p-4 text-center transition hover:-translate-y-1 hover:shadow-lg"
+              className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition hover:border-brand-300 hover:shadow-md"
             >
-              <span className={`flex h-12 w-12 items-center justify-center rounded-full text-2xl transition group-hover:scale-110 ${cat.color}`}>{cat.icon}</span>
-              <span className="text-xs font-semibold leading-tight">{tr(cat.label)}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700 transition group-hover:bg-brand-900 group-hover:text-accent-400">
+                <OptionIcon id={cat.id} />
+              </span>
+              <span className="text-sm font-semibold leading-tight text-slate-800">{tr(cat.label)}</span>
             </Link>
           ))}
         </div>
       </section>
 
       {/* ---------------- Popular schemes ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <div className="flex items-end justify-between">
-          <h2 className="text-2xl font-extrabold">{t("popular_title")}</h2>
-          <Link href="/schemes" className="text-sm font-semibold text-brand-700 hover:underline">
-            {t("see_all")} →
+      <section className="mx-auto max-w-6xl px-4 pt-24">
+        <div className="flex items-end justify-between gap-4">
+          <h2 className="text-3xl font-extrabold text-brand-950">{t("popular_title")}</h2>
+          <Link href="/schemes" className="inline-flex items-center gap-1 text-sm font-semibold text-brand-700 hover:underline">
+            {t("see_all")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {popular.map((s) => (
             <SchemeCard key={s.id} scheme={s} />
           ))}
@@ -260,48 +330,57 @@ export default function HomePage() {
       </section>
 
       {/* ---------------- Trust ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <div className="rounded-[2rem] bg-brand-50 p-6 md:p-10">
-          <h2 className="text-2xl font-extrabold text-brand-900">{t("trust_title")}</h2>
-          <ul className="mt-5 grid gap-4 md:grid-cols-3">
-            {(["trust_1", "trust_2", "trust_3"] as const).map((k, i) => (
-              <li key={k} className="flex gap-3 rounded-2xl bg-white p-4 shadow-sm">
-                <span className="text-2xl">{["🔗", "🔒", "📱"][i]}</span>
-                <span className="font-medium">{t(k)}</span>
-              </li>
-            ))}
+      <section className="mx-auto max-w-6xl px-4 pt-24">
+        <div className="grid gap-8 rounded-2xl bg-brand-50 p-6 md:grid-cols-[1fr_2fr] md:p-10">
+          <div>
+            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-900 text-accent-400">
+              <ShieldCheck className="h-6 w-6" />
+            </span>
+            <h2 className="mt-4 text-2xl font-extrabold text-brand-950">{t("trust_title")}</h2>
+            <p className="mt-2 text-slate-600">{c.trustSub}</p>
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-3">
+            {(["trust_1", "trust_2", "trust_3"] as const).map((k, i) => {
+              const Icon = [BadgeCheck, Lock, Smartphone][i];
+              return (
+                <li key={k} className="rounded-xl bg-white p-5">
+                  <Icon className="h-6 w-6 text-brand-700" strokeWidth={1.8} />
+                  <p className="mt-3 font-semibold text-slate-800">{t(k)}</p>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="mx-auto max-w-3xl px-4 pt-20">
-        <h2 className="text-center text-3xl font-extrabold">{c.faqTitle}</h2>
-        <div className="mt-8 space-y-3">
+      <section className="mx-auto max-w-3xl px-4 pt-24">
+        <h2 className="text-center text-3xl font-extrabold text-brand-950">{c.faqTitle}</h2>
+        <div className="mt-8 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
           {c.faq.map(([q, a]) => (
-            <details key={q} className="group rounded-2xl border border-black/5 bg-white p-5 shadow-sm">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold">
+            <details key={q} className="group p-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-slate-900">
                 {q}
-                <span className="text-brand-700 transition group-open:rotate-45">＋</span>
+                <Plus className="h-5 w-5 shrink-0 text-brand-700 transition group-open:rotate-45" />
               </summary>
-              <p className="mt-3 text-gray-700">{a}</p>
+              <p className="mt-3 leading-relaxed text-slate-600">{a}</p>
             </details>
           ))}
         </div>
       </section>
 
       {/* ---------------- Final call to action ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20">
-        <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-brand-800 to-brand-600 p-8 text-center text-white md:p-14">
-          <div className="bg-grid pointer-events-none absolute inset-0 opacity-50" />
-          <div className="animate-float pointer-events-none absolute -left-10 top-0 h-40 w-40 rounded-full bg-accent-400/30 blur-3xl" />
+      <section className="mx-auto max-w-6xl px-4 pt-24">
+        <div className="relative overflow-hidden rounded-2xl bg-brand-950 p-8 text-center text-white md:p-14">
+          <div className="bg-grid pointer-events-none absolute inset-0" />
+          <div className="pointer-events-none absolute left-1/2 top-0 h-60 w-[40rem] -translate-x-1/2 rounded-full bg-brand-700/50 blur-[90px]" />
           <h2 className="relative text-3xl font-extrabold md:text-4xl">{c.ctaTitle}</h2>
-          <p className="relative mt-2 text-white/80">{c.ctaSub}</p>
+          <p className="relative mt-3 text-brand-100/80">{c.ctaSub}</p>
           <Link
             href="/check"
-            className="relative mt-6 inline-block rounded-2xl bg-accent-400 px-8 py-4 text-lg font-bold text-brand-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-accent-500"
+            className="relative mt-8 inline-flex items-center gap-2 rounded-xl bg-accent-400 px-8 py-4 text-lg font-bold text-brand-950 transition hover:bg-accent-500"
           >
-            {t("hero_cta")} →
+            {t("hero_cta")} <ArrowRight className="h-5 w-5" />
           </Link>
         </div>
       </section>
@@ -309,11 +388,15 @@ export default function HomePage() {
   );
 }
 
-function Stat({ big, small }: { big: string; small: string }) {
+function Kpi({ big, small }: { big: string; small: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-black/5 bg-white p-4">
-      <span className="text-2xl font-extrabold text-brand-700">{big}</span>
-      <span className="text-sm text-gray-600">{small}</span>
+    <div className="p-5 text-center md:p-6">
+      <p className="text-3xl font-extrabold text-brand-900 md:text-4xl">{big}</p>
+      <p className="mt-1 text-sm text-slate-500">{small}</p>
     </div>
   );
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return <p className="text-sm font-bold uppercase tracking-wider text-accent-700">{children}</p>;
 }
