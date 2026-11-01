@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { DOCUMENTS } from "@/data/documents";
+import { useData } from "@/lib/data-context";
 import { SCHEME_CATEGORIES } from "@/data/options";
 import { useSaved, useSpeak } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
@@ -11,8 +11,11 @@ import type { Scheme } from "@/lib/types";
 export default function SchemeDetail({ scheme: s }: { scheme: Scheme }) {
   const { t, tr, lang } = useLang();
   const { isSaved, toggle } = useSaved();
+  const { documents: DOCUMENTS } = useData();
   const { speaking, speak, stop } = useSpeak();
   const [reported, setReported] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState("");
   const cat = SCHEME_CATEGORIES.find((c) => c.id === s.category);
   const saved = isSaved(s.id);
 
@@ -139,11 +142,47 @@ export default function SchemeDetail({ scheme: s }: { scheme: Scheme }) {
           </a>{" "}
           · {t("last_verified")}: {s.lastVerified}
         </p>
-        {/* TODO: send reports to the database (Supabase table error_reports) */}
-        <button onClick={() => setReported(true)} disabled={reported} className="font-semibold text-rose-600 hover:underline disabled:text-gray-500">
-          {reported ? `✓ ${t("report_thanks")}` : `🚩 ${t("report_error")}`}
-        </button>
+        {!reportOpen && (
+          <button onClick={() => setReportOpen(true)} disabled={reported} className="font-semibold text-rose-600 hover:underline disabled:text-gray-500">
+            {reported ? `✓ ${t("report_thanks")}` : `🚩 ${t("report_error")}`}
+          </button>
+        )}
       </div>
+
+      {/* "Report a mistake" box: saved to the error_reports table */}
+      {reportOpen && (
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!reportText.trim()) return;
+            await fetch("/api/report", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ schemeId: s.id, message: reportText }),
+            }).catch(() => null);
+            setReported(true);
+            setReportOpen(false);
+          }}
+          className="mt-3 rounded-2xl border border-rose-100 bg-rose-50 p-4"
+        >
+          <label className="text-sm font-semibold text-rose-900">{t("report_what")}</label>
+          <textarea
+            value={reportText}
+            onChange={(e) => setReportText(e.target.value)}
+            rows={3}
+            maxLength={1000}
+            className="mt-2 w-full rounded-xl border border-rose-200 bg-white p-3 outline-none focus:border-rose-400"
+          />
+          <div className="mt-2 flex gap-2">
+            <button type="submit" className="rounded-xl bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700">
+              {t("ask_send")}
+            </button>
+            <button type="button" onClick={() => setReportOpen(false)} className="rounded-xl px-4 py-2 text-sm font-semibold text-gray-600">
+              {t("cancel")}
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

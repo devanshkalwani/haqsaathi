@@ -3,7 +3,7 @@
 import Link from "next/link";
 import SchemeCard from "@/components/SchemeCard";
 import { SCHEME_CATEGORIES } from "@/data/options";
-import { SCHEMES } from "@/data/schemes";
+import { useData } from "@/lib/data-context";
 import { useLang, type UIKey } from "@/lib/i18n";
 
 const STEPS: { icon: string; t: UIKey; d: UIKey }[] = [
@@ -17,7 +17,8 @@ const POPULAR = ["ayushman-bharat", "pm-kisan", "e-shram", "pmay-gramin", "post-
 
 export default function HomePage() {
   const { t, tr } = useLang();
-  const popular = POPULAR.map((id) => SCHEMES.find((s) => s.id === id)!).filter(Boolean);
+  const { schemes: SCHEMES } = useData();
+  const popular = POPULAR.map((id) => SCHEMES.find((s) => s.id === id)).filter((s) => s !== undefined);
 
   return (
     <div>

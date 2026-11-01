@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { DOCUMENTS } from "@/data/documents";
-import { getScheme } from "@/data/schemes";
+import { useData } from "@/lib/data-context";
 import { useSaved } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
@@ -12,6 +11,7 @@ import type { Scheme } from "@/lib/types";
 export default function ChecklistPage() {
   const { t, tr } = useLang();
   const { saved, toggle } = useSaved();
+  const { documents: DOCUMENTS, getScheme } = useData();
   const [ready, setReady] = useState<string[]>([]);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function ChecklistPage() {
     setReady(storage.getDocsReady());
   }, []);
 
-  const schemes = saved.map(getScheme).filter((s): s is Scheme => Boolean(s));
+  const schemes = saved.map((id) => getScheme(id)).filter((s): s is Scheme => Boolean(s));
 
   // Combine documents from all saved schemes, without repeats.
   const docMap = new Map<string, Scheme[]>();

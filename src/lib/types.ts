@@ -81,6 +81,8 @@ export type Scheme = {
   id: string;
   level: "central" | "state" | "district";
   state?: string; // only for state/district schemes
+  district?: string; // only for district schemes
+  isPublished?: boolean; // false = hidden from the public site
   category: SchemeCategory;
   name: L;
   ministry: L;

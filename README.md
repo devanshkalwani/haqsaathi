@@ -19,6 +19,10 @@ npm run dev        # start the app
 
 Open http://localhost:3000 in your browser.
 
+### Connect the database (Supabase)
+
+Follow **[SETUP.md](SETUP.md)** (about 15 minutes). Without it, the app uses the sample data in `src/data/`.
+
 ### Optional: turn on real AI answers in the chat
 
 Without a key, the chat still works: it answers from the scheme data with a simple template.
@@ -42,6 +46,7 @@ ANTHROPIC_API_KEY=your-key-here
 | Ask Saathi | `/ask` | Chat with voice input (mic) and read-aloud answers |
 | My List | `/checklist` | Saved schemes + combined document checklist (printable) |
 | About / Privacy | `/about`, `/privacy` | Mission, disclaimer, delete-my-data button |
+| Admin | `/admin` | Password login, edit schemes, see error reports and schemes that need re-checking |
 
 ## Folder structure
 
@@ -49,6 +54,8 @@ ANTHROPIC_API_KEY=your-key-here
 src/
   app/                 Pages (Next.js App Router). Each folder = one URL.
     api/chat/route.ts  Chat backend: finds matching schemes, optionally asks Claude
+    api/report/        Saves "Report a mistake" messages
+    admin/             Admin panel (login, dashboard, scheme editor, server actions)
   components/          Reusable UI pieces (Header, Footer, SchemeCard, ...)
   data/
     schemes.ts         ⭐ All scheme data (edit here to add schemes)
@@ -60,10 +67,21 @@ src/
     i18n.tsx           Hindi/English text and language switch
     search.ts          Keyword search used by search box and chat
     storage.ts         Saves data in the browser (localStorage)
+    data.ts            ⭐ Loads schemes from Supabase (or local files), cached
+    data-context.tsx   Shares scheme data with all client pages (useData)
+    supabase.ts        Database connection
+    mappers.ts         Converts database rows ⇄ app objects
+    admin-auth.ts      Admin password login
     hooks.ts           Saved schemes, voice input, read aloud
+supabase/schema.sql    Database tables and security rules
+scripts/seed.ts        Loads src/data/ into Supabase (npm run db:seed)
 ```
 
 ## How to add a new scheme
+
+**With the database connected:** use the admin panel at `/admin` → **+ Add scheme**.
+
+**Without the database:**
 
 1. Open `src/data/schemes.ts`.
 2. Copy an existing scheme block and change the fields.
@@ -73,13 +91,14 @@ src/
 
 ## Tech
 
-Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Web Speech API (voice) · Claude API (optional)
+Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Supabase (Postgres) · Web Speech API (voice) · Claude API (optional)
 
 ## Next steps (from the SRS)
 
 - [ ] Verify all 20 sample schemes against official sources (two people each)
-- [ ] Move scheme data to Supabase + build an admin panel
-- [ ] Save "Report a mistake" to the database
+- [x] Move scheme data to Supabase + build an admin panel
+- [x] Save "Report a mistake" to the database
+- [ ] Separate admin accounts (Supabase Auth) instead of one shared password
 - [ ] Better voice in Indian languages with Bhashini or Sarvam
 - [ ] Mobile OTP login, application tracker, alerts
 - [ ] Add your home state's schemes

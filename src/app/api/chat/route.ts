@@ -1,4 +1,4 @@
-import { SCHEMES } from "@/data/schemes";
+import { getSchemes } from "@/lib/data";
 import { searchSchemes } from "@/lib/search";
 import type { Lang, Scheme } from "@/lib/types";
 
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const question = message.trim().slice(0, 1000);
   if (!question) return Response.json({ answer: "", sources: [] }, { status: 400 });
 
-  const found = searchSchemes(question, SCHEMES, 3);
+  const found = searchSchemes(question, await getSchemes(), 3);
   const sources = found.map((s) => ({ id: s.id, name: s.name[lang] }));
 
   const apiKey = process.env.ANTHROPIC_API_KEY;

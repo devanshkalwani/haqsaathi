@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import SchemeCard from "@/components/SchemeCard";
 import { SCHEME_CATEGORIES } from "@/data/options";
-import { SCHEMES } from "@/data/schemes";
+import { useData } from "@/lib/data-context";
 import { useLang } from "@/lib/i18n";
 import { searchSchemes } from "@/lib/search";
 import type { SchemeCategory } from "@/lib/types";
@@ -13,6 +13,7 @@ export default function SchemesClient() {
   const initialCat = (useSearchParams().get("category") as SchemeCategory | null) ?? null;
 
   const { t, tr } = useLang();
+  const { schemes: SCHEMES } = useData();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<SchemeCategory | null>(initialCat);
 
@@ -20,7 +21,7 @@ export default function SchemesClient() {
     let items = query.trim() ? searchSchemes(query, SCHEMES, 50) : SCHEMES;
     if (category) items = items.filter((s) => s.category === category);
     return items;
-  }, [query, category]);
+  }, [query, category, SCHEMES]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
