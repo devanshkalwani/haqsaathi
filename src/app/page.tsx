@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import {
   ArrowRight,
-  BadgeCheck,
   BookOpenText,
   FileCheck2,
   HelpCircle,
@@ -12,19 +10,19 @@ import {
   LayoutDashboard,
   Lock,
   LogIn,
-  RotateCw,
   SearchCheck,
   ShieldCheck,
-  Sparkles,
   SquareArrowOutUpRight,
-  UserRound,
   type LucideIcon,
 } from "lucide-react";
-import OptionIcon from "@/components/Icon";
 import IntroVideo from "@/components/IntroVideo";
 import Reveal from "@/components/Reveal";
-import { SCHEME_CATEGORIES } from "@/data/options";
+import CategoryRail from "@/components/home/CategoryRail";
+import CountUp from "@/components/home/CountUp";
+import ExpandPanels from "@/components/home/ExpandPanels";
+import StoryScroll from "@/components/home/StoryScroll";
 import { useAuth } from "@/lib/auth";
+import { useData } from "@/lib/data-context";
 import { useLang } from "@/lib/i18n";
 
 /** Home page text, in both languages. Kept short on purpose: the video and cards do the explaining. */
@@ -36,18 +34,24 @@ const C = {
     sub: "Answer 8 simple questions. See every scheme you qualify for, and exactly how to get it.",
     chips: ["Always free", "Never asks for OTP or Aadhaar", "Official links only"],
     doTitle: "What HaqSaathi does",
-    doSub: "Tap a card to turn it",
-    hoverHint: "Hover or tap",
+    doSub: "Four simple things, done for you.",
+    stats: ["simple questions", "minutes to your list", "schemes explained", "cost to you, always"],
+    storyEyebrow: "How it works",
+    storyTitle: "From questions to benefits, in three steps",
+    story: [
+      ["Answer 8 easy questions", "Tap or speak in Hindi or English. Age, work, family, income. Nothing secret, no Aadhaar number."],
+      ["See what you qualify for", "HaqSaathi checks your answers against each scheme's official rules and shows how much you can get."],
+      ["Get ready and apply", "An exact list of documents, simple steps, and the official link. No agents. No fees."],
+    ],
+    railTitle: "Made for every Indian family",
+    railSub: "Pick what fits you and see the schemes",
+    railCount: ["scheme", "schemes"] as [string, string],
     cards: [
       ["Find", "Every scheme for you", "Answer 8 easy questions about your family. We check them against each scheme's official rules."],
       ["Understand", "In simple words", "No legal language. Read or listen in Hindi or English: what you get, who can apply, and how."],
       ["Prepare", "The right documents", "An exact checklist of papers before you go, so your form is not rejected for a small mistake."],
       ["Apply", "On the official site", "Step-by-step help and the official government link. No agents. No fees."],
     ],
-    flowTitle: "How it works",
-    flowSub: "About 2 minutes, start to finish",
-    flow: ["You answer", "HaqSaathi checks the rules", "You get your list"],
-    madeFor: "Made for every Indian family",
     ctaTitle: "Find your benefits today",
     ctaSub: "2 minutes. Free. In your language.",
     faq: "Questions? Read the FAQ",
@@ -59,18 +63,24 @@ const C = {
     sub: "8 आसान सवालों के जवाब दें। देखें आप किन योजनाओं के पात्र हैं, और उन्हें कैसे पाएं।",
     chips: ["हमेशा मुफ्त", "OTP या आधार कभी नहीं मांगते", "सिर्फ आधिकारिक लिंक"],
     doTitle: "हक़साथी क्या करता है",
-    doSub: "कार्ड पलटने के लिए टैप करें",
-    hoverHint: "टैप करें",
+    doSub: "चार आसान काम, आपके लिए।",
+    stats: ["आसान सवाल", "मिनट में आपकी सूची", "योजनाएं आसान भाषा में", "आपका खर्च, हमेशा"],
+    storyEyebrow: "यह कैसे काम करता है",
+    storyTitle: "सवालों से लाभ तक, तीन कदम में",
+    story: [
+      ["8 आसान सवालों के जवाब दें", "हिंदी या अंग्रेज़ी में टैप करें या बोलें। उम्र, काम, परिवार, आय। कोई गुप्त जानकारी नहीं, आधार नंबर नहीं।"],
+      ["देखें आप किसके पात्र हैं", "हक़साथी आपके जवाबों को हर योजना के आधिकारिक नियमों से मिलाता है और बताता है कि कितना मिल सकता है।"],
+      ["तैयारी करें और आवेदन करें", "दस्तावेज़ों की पूरी सूची, आसान कदम और आधिकारिक लिंक। कोई एजेंट नहीं। कोई फीस नहीं।"],
+    ],
+    railTitle: "हर भारतीय परिवार के लिए",
+    railSub: "जो आप पर लागू हो, चुनें और योजनाएं देखें",
+    railCount: ["योजना", "योजनाएं"] as [string, string],
     cards: [
       ["खोजें", "आपकी हर योजना", "अपने परिवार के बारे में 8 आसान सवालों के जवाब दें। हम उन्हें हर योजना के आधिकारिक नियमों से मिलाते हैं।"],
       ["समझें", "आसान भाषा में", "कोई कठिन कानूनी भाषा नहीं। हिंदी या अंग्रेज़ी में पढ़ें या सुनें: क्या मिलेगा, कौन आवेदन कर सकता है, कैसे।"],
       ["तैयारी", "सही दस्तावेज़", "जाने से पहले कागज़ों की पूरी सूची, ताकि छोटी सी गलती पर फॉर्म रद्द न हो।"],
       ["आवेदन", "आधिकारिक साइट पर", "कदम-दर-कदम मदद और आधिकारिक सरकारी लिंक। कोई एजेंट नहीं। कोई फीस नहीं।"],
     ],
-    flowTitle: "यह कैसे काम करता है",
-    flowSub: "शुरू से अंत तक लगभग 2 मिनट",
-    flow: ["आप जवाब दें", "हक़साथी नियम जांचता है", "आपको सूची मिलती है"],
-    madeFor: "हर भारतीय परिवार के लिए",
     ctaTitle: "आज ही अपने लाभ जानें",
     ctaSub: "2 मिनट। मुफ्त। आपकी भाषा में।",
     faq: "सवाल हैं? FAQ पढ़ें",
@@ -78,23 +88,23 @@ const C = {
 };
 
 const CARD_ICONS: LucideIcon[] = [SearchCheck, BookOpenText, FileCheck2, SquareArrowOutUpRight];
-const FLOW_ICONS: LucideIcon[] = [UserRound, Sparkles, BadgeCheck];
 const CHIP_ICONS: LucideIcon[] = [IndianRupee, Lock, ShieldCheck];
 
 export default function HomePage() {
-  const { t, tr, lang } = useLang();
+  const { t, lang } = useLang();
+  const { schemes } = useData();
   const { user } = useAuth();
   const c = C[lang];
 
   return (
-    <div className="overflow-x-hidden">
+    <div className="overflow-x-clip">
       {/* ---------------- Hero: headline + intro video ---------------- */}
       <section className="relative isolate overflow-hidden bg-brand-950 text-white">
         <div className="bg-grid pointer-events-none absolute inset-0 -z-10" />
         <div className="animate-aurora pointer-events-none absolute -left-40 -top-40 -z-10 h-[38rem] w-[38rem] rounded-full bg-brand-600/40 blur-[130px]" />
-        <div className="animate-aurora pointer-events-none absolute -bottom-48 right-0 -z-10 h-[30rem] w-[30rem] rounded-full bg-accent-400/15 blur-[120px] [animation-delay:-9s]" />
+        <div className="animate-aurora pointer-events-none absolute -bottom-48 right-0 -z-10 h-[30rem] w-[30rem] rounded-full bg-indigo-500/25 blur-[120px] [animation-delay:-9s]" />
 
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pb-20 pt-12 md:pb-28 md:pt-20 lg:grid-cols-[1fr_1.15fr]">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 pb-32 pt-12 md:pb-40 md:pt-20 lg:grid-cols-[1fr_1.15fr]">
           <div>
             <p className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-sm font-medium text-brand-100">
               <ShieldCheck className="h-4 w-4 text-accent-400" /> {c.badge}
@@ -138,102 +148,75 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ---------------- What we do: flip cards ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-20 md:pt-28">
-        <Reveal className="text-center">
-          <h2 className="text-3xl font-extrabold text-brand-950 md:text-4xl">{c.doTitle}</h2>
-          <p className="mt-2 inline-flex items-center gap-1.5 text-slate-500">
-            <RotateCw className="h-4 w-4" /> {c.doSub}
-          </p>
-        </Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {c.cards.map(([title, short, back], i) => (
-            <Reveal key={title} delay={i * 110}>
-              <FlipCard index={i} icon={CARD_ICONS[i]} title={title} short={short} back={back} hint={c.hoverHint} />
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* ---------------- How it works: animated flow ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-24 md:pt-32">
+      {/* ---------------- Key numbers, overlapping the hero ---------------- */}
+      <section className="relative z-10 mx-auto -mt-20 max-w-6xl px-4">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-brand-950 px-6 py-12 text-white md:px-12 md:py-16">
-            <div className="bg-grid pointer-events-none absolute inset-0" />
-            <div className="animate-aurora pointer-events-none absolute -right-20 -top-32 h-96 w-96 rounded-full bg-brand-600/40 blur-[110px]" />
-            <div className="relative text-center">
-              <h2 className="text-3xl font-extrabold md:text-4xl">{c.flowTitle}</h2>
-              <p className="mt-2 text-brand-100/75">{c.flowSub}</p>
-            </div>
-
-            <div className="relative mx-auto mt-12 grid max-w-4xl gap-10 md:grid-cols-3 md:gap-4">
-              {/* connecting line with travelling lights (desktop) */}
-              <div className="absolute left-[16.6%] right-[16.6%] top-10 hidden h-px bg-gradient-to-r from-white/10 via-white/30 to-white/10 md:block">
-                {[0, 1.5, 3].map((d) => (
-                  <span
-                    key={d}
-                    className="animate-travel absolute -top-[3px] h-[7px] w-[7px] rounded-full bg-accent-400 shadow-[0_0_14px_4px_rgba(242,181,68,0.7)]"
-                    style={{ animationDelay: `${d}s` }}
-                  />
-                ))}
+          <div className="grid grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl shadow-brand-950/10 ring-1 ring-slate-200 md:grid-cols-4">
+            {[
+              { n: 8, pre: "", suf: "" },
+              { n: 2, pre: "", suf: "" },
+              { n: schemes.length, pre: "", suf: "+" },
+              { n: 0, pre: "₹", suf: "" },
+            ].map((x, i) => (
+              <div key={i} className={`group relative p-6 text-center transition-colors duration-300 hover:bg-brand-50/60 md:p-8 ${i % 2 === 0 ? "border-r border-slate-100" : ""} ${i < 2 ? "border-b border-slate-100 md:border-b-0" : ""} ${i === 1 ? "md:border-r" : ""}`}>
+                <p className="text-4xl font-extrabold text-brand-950 md:text-5xl">
+                  <CountUp to={x.n} prefix={x.pre} suffix={x.suf} />
+                </p>
+                <p className="mt-2 text-sm font-medium text-slate-500">{c.stats[i]}</p>
+                <span className="absolute inset-x-8 bottom-0 h-0.5 origin-left scale-x-0 rounded-full bg-accent-400 transition-transform duration-500 group-hover:scale-x-100" />
               </div>
-              {c.flow.map((label, i) => {
-                const Icon = FLOW_ICONS[i];
-                return (
-                  <div key={label} className="relative flex flex-col items-center text-center">
-                    <span className="relative flex h-20 w-20 items-center justify-center">
-                      <span className="animate-ping-slow absolute inset-0 rounded-full bg-accent-400/20" style={{ animationDelay: `${i * 0.8}s` }} />
-                      <span className="relative flex h-20 w-20 items-center justify-center rounded-full border border-white/15 bg-brand-900 text-accent-400 shadow-xl shadow-black/30">
-                        <Icon className="h-8 w-8" strokeWidth={1.6} />
-                      </span>
-                    </span>
-                    <span className="mt-2 text-xs font-bold text-accent-400">0{i + 1}</span>
-                    <p className="mt-1 text-lg font-semibold">{label}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* ---------------- Made for: scrolling strip ---------------- */}
-      <section className="pt-24 md:pt-32">
-        <Reveal className="mx-auto max-w-6xl px-4 text-center">
-          <h2 className="text-3xl font-extrabold text-brand-950">{c.madeFor}</h2>
-        </Reveal>
-        <div className="mask-fade-x mt-8 overflow-hidden">
-          <div className="animate-marquee flex w-max gap-3 hover:[animation-play-state:paused]">
-            {[...SCHEME_CATEGORIES, ...SCHEME_CATEGORIES].map((cat, i) => (
-              <Link
-                key={`${cat.id}-${i}`}
-                href={`/schemes?category=${cat.id}`}
-                aria-hidden={i >= SCHEME_CATEGORIES.length}
-                tabIndex={i >= SCHEME_CATEGORIES.length ? -1 : 0}
-                className="group flex shrink-0 items-center gap-3 rounded-full border border-slate-200 bg-white py-2.5 pl-2.5 pr-5 transition hover:border-brand-300 hover:shadow-md"
-              >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-50 text-brand-700 transition group-hover:bg-brand-900 group-hover:text-accent-400">
-                  <OptionIcon id={cat.id} className="h-4 w-4" />
-                </span>
-                <span className="font-semibold text-slate-800">{tr(cat.label)}</span>
-              </Link>
             ))}
           </div>
+        </Reveal>
+      </section>
+
+      {/* ---------------- What we do: hover-expanding panels ---------------- */}
+      <section className="mx-auto max-w-6xl px-4 pt-24 md:pt-32">
+        <Reveal className="mb-10 flex flex-col justify-between gap-3 md:flex-row md:items-end">
+          <h2 className="text-3xl font-extrabold text-brand-950 md:text-5xl">{c.doTitle}</h2>
+          <p className="text-lg text-slate-500">{c.doSub}</p>
+        </Reveal>
+        <Reveal delay={100}>
+          <ExpandPanels panels={c.cards.map(([title, short, body], i) => ({ icon: CARD_ICONS[i], title, short, body }))} />
+        </Reveal>
+      </section>
+
+      {/* ---------------- How it works: pinned phone + scrolling steps ---------------- */}
+      <section className="relative mt-24 bg-gradient-to-b from-brand-50/70 via-brand-50/40 to-transparent py-20 md:mt-32 md:py-28">
+        <div className="mx-auto max-w-6xl px-4">
+          <Reveal className="max-w-2xl">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent-700">{c.storyEyebrow}</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-brand-950 md:text-5xl">{c.storyTitle}</h2>
+          </Reveal>
+          <div className="mt-10 lg:mt-4">
+            <StoryScroll lang={lang} steps={c.story.map(([title, body]) => ({ title, body }))} />
+          </div>
         </div>
+      </section>
+
+      {/* ---------------- Categories: swipeable rail ---------------- */}
+      <section className="pt-20 md:pt-28">
+        <Reveal>
+          <CategoryRail title={c.railTitle} sub={c.railSub} countLabel={c.railCount} />
+        </Reveal>
       </section>
 
       {/* ---------------- Final call to action ---------------- */}
-      <section className="mx-auto max-w-6xl px-4 pt-24 md:pt-32">
+      <section className="mx-auto max-w-6xl px-4 pt-20 md:pt-28">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent-400 to-amber-300 p-8 text-center text-brand-950 md:p-14">
-            <div className="pointer-events-none absolute -left-10 -top-10 h-48 w-48 rounded-full bg-white/30 blur-3xl" />
-            <h2 className="relative text-3xl font-extrabold md:text-4xl">{c.ctaTitle}</h2>
-            <p className="relative mt-3 text-brand-900/80">{c.ctaSub}</p>
+          <div className="relative isolate overflow-hidden rounded-3xl bg-brand-950 px-6 py-14 text-center text-white md:px-14 md:py-20">
+            <div className="bg-grid pointer-events-none absolute inset-0 -z-10" />
+            <div className="animate-aurora pointer-events-none absolute -left-24 -top-24 -z-10 h-80 w-80 rounded-full bg-brand-600/50 blur-[100px]" />
+            <div className="animate-aurora pointer-events-none absolute -bottom-24 -right-10 -z-10 h-72 w-72 rounded-full bg-sky-500/20 blur-[100px] [animation-delay:-8s]" />
+            <h2 className="text-3xl font-extrabold md:text-5xl">{c.ctaTitle}</h2>
+            <p className="mt-3 text-lg text-brand-100/80">{c.ctaSub}</p>
             <Link
               href="/check"
-              className="relative mt-8 inline-flex items-center gap-2 rounded-xl bg-brand-950 px-8 py-4 text-lg font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-900"
+              className="group relative mt-9 inline-flex items-center gap-2 overflow-hidden rounded-xl bg-accent-400 px-8 py-4 text-lg font-bold text-brand-950 shadow-lg shadow-accent-400/25 transition hover:-translate-y-0.5 hover:bg-accent-500"
             >
-              {t("hero_cta")} <ArrowRight className="h-5 w-5" />
+              <span className="animate-shine pointer-events-none absolute inset-0 bg-[linear-gradient(110deg,transparent_35%,rgba(255,255,255,0.45)_50%,transparent_65%)] bg-[length:200%_100%]" />
+              <span className="relative">{t("hero_cta")}</span>
+              <ArrowRight className="relative h-5 w-5 transition group-hover:translate-x-1" />
             </Link>
           </div>
         </Reveal>
@@ -244,50 +227,5 @@ export default function HomePage() {
         </p>
       </section>
     </div>
-  );
-}
-
-/** A card that turns over (hover on desktop, tap on phones) to show a one-line explanation. */
-function FlipCard({ index, icon: Icon, title, short, back, hint }: { index: number; icon: LucideIcon; title: string; short: string; back: string; hint: string }) {
-  const [flipped, setFlipped] = useState(false);
-  return (
-    <button
-      type="button"
-      onClick={() => setFlipped((f) => !f)}
-      aria-pressed={flipped}
-      aria-label={`${title}: ${back}`}
-      className={`flip block h-64 w-full text-left sm:h-72 ${flipped ? "is-flipped" : ""}`}
-    >
-      <div className="flip-inner">
-        {/* front */}
-        <div className="flip-face flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-brand-50" />
-          <div className="relative flex items-start justify-between">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-900 text-accent-400 shadow-lg shadow-brand-900/20">
-              <Icon className="h-7 w-7" strokeWidth={1.7} />
-            </span>
-            <span className="text-5xl font-extrabold text-brand-100">0{index + 1}</span>
-          </div>
-          <div className="relative">
-            <h3 className="text-2xl font-extrabold text-brand-950">{title}</h3>
-            <p className="mt-1 text-slate-500">{short}</p>
-            <p className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-accent-700">
-              <RotateCw className="h-3.5 w-3.5" /> {hint}
-            </p>
-          </div>
-        </div>
-        {/* back */}
-        <div className="flip-face flip-back flex flex-col justify-between overflow-hidden rounded-2xl bg-brand-900 p-6 text-white shadow-xl shadow-brand-900/30">
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-44 w-44 rounded-full bg-accent-400/20 blur-2xl" />
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-accent-400 text-brand-950">
-            <Icon className="h-5 w-5" />
-          </span>
-          <p className="relative text-lg font-medium leading-relaxed">{back}</p>
-          <span className="relative text-sm font-bold text-accent-400">
-            0{index + 1} · {title}
-          </span>
-        </div>
-      </div>
-    </button>
   );
 }

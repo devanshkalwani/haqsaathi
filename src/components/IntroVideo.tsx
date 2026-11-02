@@ -38,7 +38,7 @@ export default function IntroVideo() {
 
   return (
     <div className="relative">
-      <div className="pointer-events-none absolute -inset-8 rounded-[2.5rem] bg-accent-400/10 blur-3xl" />
+      <div className="pointer-events-none absolute -inset-8 rounded-[2.5rem] bg-indigo-500/15 blur-3xl" />
       <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-brand-950 shadow-2xl shadow-black/50 ring-1 ring-white/5">
         <video
           key={lang}

@@ -101,21 +101,6 @@ h1, h2, h3 { letter-spacing: -0.02em; }
 }
 .reveal.is-in { opacity: 1; transform: none; filter: none; }
 
-/* Flip ("twister") cards: hover on desktop, tap on phones */
-.flip { perspective: 1200px; }
-.flip-inner {
-  position: relative;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.8s cubic-bezier(0.3, 0.7, 0.2, 1);
-}
-.flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-.flip-back { transform: rotateY(180deg); }
-.flip.is-flipped .flip-inner { transform: rotateY(180deg); }
-@media (hover: hover) {
-  .flip:hover .flip-inner { transform: rotateY(180deg); }
-}
-
 /* Edge fade for the scrolling category strip */
 .mask-fade-x { mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent); }
 
