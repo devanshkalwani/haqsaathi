@@ -6,6 +6,8 @@ import { AREAS, CATEGORIES, FLAGS, GENDERS, INCOMES, OCCUPATIONS, STATES } from 
 import { useLang, type UIKey } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
 import type { Flag, Profile } from "@/lib/types";
+import OptionIcon from "@/components/Icon";
+import { Check } from "lucide-react";
 
 /** The quiz: one simple question per screen, big buttons. */
 
@@ -148,9 +150,9 @@ export default function CheckPage() {
                         on ? "border-brand-600 bg-brand-600 text-white" : "border-gray-300"
                       }`}
                     >
-                      {on && "✓"}
+                      {on && <Check className="h-4 w-4" strokeWidth={3} />}
                     </span>
-                    <span className="text-xl">{f.icon}</span>
+                    <OptionIcon id={f.id} className="h-5 w-5 shrink-0 text-brand-700" />
                     {tr(f.label)}
                   </button>
                 );
@@ -174,12 +176,12 @@ export default function CheckPage() {
             onClick={() => (isLast ? finish() : setStep((s) => s + 1))}
             className="flex-1 rounded-2xl bg-brand-700 px-6 py-3.5 text-lg font-bold text-white transition hover:bg-brand-800 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {isLast ? `${t("see_results")} 🎉` : `${t("next")} →`}
+            {isLast ? `${t("see_results")} →` : `${t("next")} →`}
           </button>
         </div>
       </div>
 
-      <p className="mt-4 text-center text-sm text-gray-500">🔒 {t("privacy_note")}</p>
+      <p className="mt-4 text-center text-sm text-gray-500">{t("privacy_note")}</p>
     </div>
   );
 }
@@ -212,7 +214,7 @@ function Options<T extends string>({
               cols === 3 ? "flex-col justify-center text-center" : ""
             } ${on ? "border-brand-600 bg-brand-50 text-brand-900" : "border-gray-200 hover:border-brand-200 hover:bg-brand-50/40"}`}
           >
-            {it.icon && <span className="text-2xl">{it.icon}</span>}
+            {it.icon && <OptionIcon id={it.id} className="h-7 w-7 shrink-0 text-brand-700" />}
             {tr(it.label)}
           </button>
         );

@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSpeak, useSpeechInput } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
+import { FileText, Lock, MessagesSquare, Mic, Volume2 } from "lucide-react";
 
 type Msg = { role: "user" | "bot"; text: string; sources?: { id: string; name: string }[] };
 
@@ -67,7 +68,7 @@ export default function AskClient() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col px-4 py-6" style={{ minHeight: "calc(100vh - 4rem)" }}>
       <div className="flex items-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-700 text-2xl">🤝</span>
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-900 text-accent-400"><MessagesSquare className="h-6 w-6" /></span>
         <div>
           <h1 className="text-2xl font-extrabold">{t("ask_title")}</h1>
           <p className="text-sm text-gray-500">{t("ask_sub")}</p>
@@ -106,7 +107,7 @@ export default function AskClient() {
                     href={`/schemes/${s.id}`}
                     className="rounded-full bg-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-800 hover:bg-brand-200"
                   >
-                    📄 {s.name} →
+                    <FileText className="mr-1 inline h-4 w-4" />{s.name} →
                   </Link>
                 ))}
               </div>
@@ -120,7 +121,7 @@ export default function AskClient() {
 
       {/* Input bar */}
       <div className="sticky bottom-16 mt-6 md:bottom-4">
-        {mic.listening && <p className="mb-2 text-center text-sm font-semibold text-rose-600">🎙️ {t("mic_listening")}</p>}
+        {mic.listening && <p className="mb-2 text-center text-sm font-semibold text-rose-600">{t("mic_listening")}</p>}
         {!mic.supported && <p className="mb-2 text-center text-sm text-gray-500">{t("mic_unsupported")}</p>}
         <form
           onSubmit={(e) => {
@@ -137,7 +138,7 @@ export default function AskClient() {
               mic.listening ? "animate-pulse bg-rose-500 text-white" : "bg-gray-100 hover:bg-gray-200"
             }`}
           >
-            🎙️
+            <Mic className="h-5 w-5" />
           </button>
           <input
             value={input}
@@ -153,7 +154,7 @@ export default function AskClient() {
             {t("ask_send")}
           </button>
         </form>
-        <p className="mt-2 text-center text-xs text-gray-500">🔒 {t("ask_warning")}</p>
+        <p className="mt-2 text-center text-xs text-gray-500"><Lock className="mr-1 inline h-3.5 w-3.5" />{t("ask_warning")}</p>
       </div>
     </div>
   );
@@ -171,7 +172,7 @@ function Bubble({ role, text, onListen, listenLabel }: { role: "user" | "bot"; t
         {text}
         {onListen && (
           <button onClick={onListen} className="mt-2 block text-xs font-semibold text-brand-700 hover:underline">
-            🔊 {listenLabel}
+            <Volume2 className="mr-1 inline h-4 w-4" />{listenLabel}
           </button>
         )}
       </div>

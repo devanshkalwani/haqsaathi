@@ -2,19 +2,66 @@
 
 /* Design tokens: change colours here and the whole app updates. */
 @theme {
-  --color-brand-50: #f0fdfa;
-  --color-brand-100: #ccfbf1;
-  --color-brand-200: #99f6e4;
-  --color-brand-500: #14b8a6;
-  --color-brand-600: #0d9488;
-  --color-brand-700: #0f766e;
-  --color-brand-800: #115e59;
-  --color-brand-900: #134e4a;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b;
-  --color-ink: #1f2933;
-  --color-paper: #fbfaf7;
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", "Nirmala UI", Arial, sans-serif;
+  /* Brand: deep navy (trust) + marigold (warmth). Not the national flag colours. */
+  --color-brand-50: #f2f5fb;
+  --color-brand-100: #e1e8f5;
+  --color-brand-200: #c2d0ea;
+  --color-brand-300: #93abd6;
+  --color-brand-500: #3d5fae;
+  --color-brand-600: #2c4c99;
+  --color-brand-700: #213d82;
+  --color-brand-800: #182f66;
+  --color-brand-900: #10214a;
+  --color-brand-950: #0a1430;
+  --color-accent-50: #fdf6e7;
+  --color-accent-100: #fbe9c2;
+  --color-accent-400: #f2b544;
+  --color-accent-500: #e09b21;
+  --color-accent-700: #9a5f0c;
+  --color-ink: #0f172a;
+  --color-paper: #f7f6f2;
+  /* Animations (use as animate-float, animate-float-slow, ...) */
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-float-delay: float 7s ease-in-out 1.5s infinite;
+  --animate-spin-slow: spin 24s linear infinite;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+  --animate-shine: shine 3.5s ease-in-out infinite;
+
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-travel: travel 4.5s ease-in-out infinite;
+  --animate-ping-slow: ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+
+  @keyframes aurora {
+    0% { transform: translate3d(-10%, -6%, 0) scale(1); }
+    50% { transform: translate3d(8%, 4%, 0) scale(1.15); }
+    100% { transform: translate3d(-4%, 8%, 0) scale(1.05); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes travel {
+    0% { left: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-14px) rotate(var(--r, 0deg)); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shine {
+    0% { background-position: -200% 0; }
+    60%, 100% { background-position: 200% 0; }
+  }
+
+  --font-sans: "Plus Jakarta Sans Variable", "Noto Sans Devanagari", ui-sans-serif, system-ui, "Segoe UI", Roboto, "Nirmala UI", Arial, sans-serif;
 }
 
 body {
@@ -29,4 +76,59 @@ button, a, input, select {
 
 @media print {
   header, footer, nav, .no-print { display: none !important; }
+}
+
+/* Fine line grid used behind dark hero sections, fading out at the edges */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at 50% 30%, black 20%, transparent 75%);
+}
+
+/* Hindi text needs a little more line height */
+:lang(hi) { line-height: 1.6; }
+h1, h2, h3 { letter-spacing: -0.02em; }
+:lang(hi) h1, :lang(hi) h2, :lang(hi) h3 { letter-spacing: 0; }
+
+/* Scroll reveal: elements start hidden and rise in when they enter the screen (see components/Reveal.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.8s ease;
+}
+.reveal.is-in { opacity: 1; transform: none; filter: none; }
+
+/* Flip ("twister") cards: hover on desktop, tap on phones */
+.flip { perspective: 1200px; }
+.flip-inner {
+  position: relative;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); }
+.flip.is-flipped .flip-inner { transform: rotateY(180deg); }
+@media (hover: hover) {
+  .flip:hover .flip-inner { transform: rotateY(180deg); }
+}
+
+/* Edge fade for the scrolling category strip */
+.mask-fade-x { mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent); }
+
+/* 3D tilt helpers */
+.perspective { perspective: 1200px; }
+.preserve-3d { transform-style: preserve-3d; }
+
+/* Respect people who turn off animations (also saves battery on cheap phones) */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; filter: none; }
 }

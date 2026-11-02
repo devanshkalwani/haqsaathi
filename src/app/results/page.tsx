@@ -8,6 +8,7 @@ import { findEligible } from "@/lib/eligibility";
 import { useLang } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
 import type { Profile } from "@/lib/types";
+import { ClipboardList, MessagesSquare, Pencil } from "lucide-react";
 
 export default function ResultsPage() {
   const { t } = useLang();
@@ -24,7 +25,7 @@ export default function ResultsPage() {
   if (profile === null) {
     return (
       <div className="mx-auto max-w-xl px-4 py-20 text-center">
-        <p className="text-5xl">📝</p>
+        <ClipboardList className="h-12 w-12 text-brand-700" strokeWidth={1.5} />
         <p className="mt-4 text-lg">{t("results_no_profile")}</p>
         <Link href="/check" className="mt-6 inline-block rounded-2xl bg-brand-700 px-6 py-3 font-bold text-white">
           {t("hero_cta")} →
@@ -40,14 +41,14 @@ export default function ResultsPage() {
       <div className="rounded-3xl bg-gradient-to-br from-brand-700 to-brand-600 p-6 text-white md:p-8">
         <p className="text-white/80">{t("results_title")}</p>
         <h1 className="mt-1 text-3xl font-extrabold md:text-4xl">
-          {t("results_found")} {matches.length} {t("results_schemes")} 🎉
+          {t("results_found")} {matches.length} {t("results_schemes")}
         </h1>
         <div className="mt-5 flex flex-wrap gap-3">
           <Link href="/check" className="rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">
-            ✏️ {t("edit_answers")}
+            <Pencil className="mr-1.5 inline h-4 w-4" />{t("edit_answers")}
           </Link>
           <Link href="/checklist" className="rounded-xl bg-accent-400 px-4 py-2 text-sm font-bold text-brand-900 hover:bg-accent-500">
-            📋 {t("nav_checklist")}
+            <ClipboardList className="mr-1.5 inline h-4 w-4" />{t("nav_checklist")}
           </Link>
         </div>
       </div>
@@ -58,7 +59,7 @@ export default function ResultsPage() {
         <div className="mt-10 text-center">
           <p className="text-gray-600">{t("results_none")}</p>
           <Link href="/ask" className="mt-4 inline-block rounded-2xl bg-brand-700 px-6 py-3 font-bold text-white">
-            💬 {t("nav_ask")}
+            <MessagesSquare className="mr-1.5 inline h-4 w-4" />{t("nav_ask")}
           </Link>
         </div>
       ) : (
