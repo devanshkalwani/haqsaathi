@@ -56,15 +56,15 @@ export const FLAGS: { id: Flag; label: L; icon: string }[] = [
 ];
 
 export const SCHEME_CATEGORIES: { id: SchemeCategory; label: L; icon: string; color: string }[] = [
-  { id: "farmers", label: { en: "Farmers", hi: "किसान" }, icon: "🌾", color: "bg-brand-50 text-brand-800" },
-  { id: "health", label: { en: "Health", hi: "स्वास्थ्य" }, icon: "🏥", color: "bg-brand-50 text-brand-800" },
-  { id: "housing", label: { en: "Housing", hi: "आवास" }, icon: "🏠", color: "bg-brand-50 text-brand-800" },
-  { id: "money", label: { en: "Bank & Insurance", hi: "बैंक और बीमा" }, icon: "🏦", color: "bg-brand-50 text-brand-800" },
-  { id: "workers", label: { en: "Workers", hi: "श्रमिक" }, icon: "🧱", color: "bg-brand-50 text-brand-800" },
-  { id: "women", label: { en: "Women & Girls", hi: "महिला और बेटी" }, icon: "👩", color: "bg-brand-50 text-brand-800" },
-  { id: "students", label: { en: "Students", hi: "छात्र" }, icon: "🎓", color: "bg-brand-50 text-brand-800" },
-  { id: "elderly", label: { en: "Elderly & Disabled", hi: "बुज़ुर्ग और दिव्यांग" }, icon: "🧓", color: "bg-brand-50 text-brand-800" },
-  { id: "business", label: { en: "Business & Loans", hi: "व्यापार और लोन" }, icon: "🏪", color: "bg-brand-50 text-brand-800" },
+  { id: "farmers", label: { en: "Farmers", hi: "किसान" }, icon: "🌾", color: "bg-tint text-link" },
+  { id: "health", label: { en: "Health", hi: "स्वास्थ्य" }, icon: "🏥", color: "bg-tint text-link" },
+  { id: "housing", label: { en: "Housing", hi: "आवास" }, icon: "🏠", color: "bg-tint text-link" },
+  { id: "money", label: { en: "Bank & Insurance", hi: "बैंक और बीमा" }, icon: "🏦", color: "bg-tint text-link" },
+  { id: "workers", label: { en: "Workers", hi: "श्रमिक" }, icon: "🧱", color: "bg-tint text-link" },
+  { id: "women", label: { en: "Women & Girls", hi: "महिला और बेटी" }, icon: "👩", color: "bg-tint text-link" },
+  { id: "students", label: { en: "Students", hi: "छात्र" }, icon: "🎓", color: "bg-tint text-link" },
+  { id: "elderly", label: { en: "Elderly & Disabled", hi: "बुज़ुर्ग और दिव्यांग" }, icon: "🧓", color: "bg-tint text-link" },
+  { id: "business", label: { en: "Business & Loans", hi: "व्यापार और लोन" }, icon: "🏪", color: "bg-tint text-link" },
 ];
 
 export const STATES = [

@@ -9,7 +9,7 @@ export default async function AdminLogin({ searchParams }: PageProps<"/admin/log
       <h1 className="text-2xl font-extrabold">🔐 Admin login</h1>
 
       {!isAdminPasswordSet() ? (
-        <p className="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+        <p className="mt-4 rounded-xl bg-warn-soft p-4 text-sm text-warn-fg">
           Set <code>ADMIN_PASSWORD</code> in <code>.env.local</code> and restart <code>npm run dev</code>.
         </p>
       ) : (
@@ -20,10 +20,10 @@ export default async function AdminLogin({ searchParams }: PageProps<"/admin/log
             required
             autoFocus
             placeholder="Admin password"
-            className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 outline-none focus:border-brand-600"
+            className="w-full rounded-xl border-2 border-line-strong bg-surface px-4 py-3 text-fg outline-none focus:border-link"
           />
-          {error && <p className="text-sm font-semibold text-rose-600">Wrong password. Try again.</p>}
-          <button className="w-full rounded-xl bg-brand-700 px-4 py-3 font-bold text-white hover:bg-brand-800">Log in</button>
+          {error && <p className="text-sm font-semibold text-bad">Wrong password. Try again.</p>}
+          <button className="w-full rounded-xl bg-primary px-4 py-3 font-bold text-on-primary hover:bg-primary-hover">Log in</button>
         </form>
       )}
     </div>

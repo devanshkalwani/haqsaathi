@@ -29,8 +29,8 @@ export default function CategoryRail({ title, sub, countLabel }: { title: string
     <div>
       <div className="mx-auto flex max-w-6xl items-end justify-between gap-6 px-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-brand-950 md:text-4xl">{title}</h2>
-          <p className="mt-2 text-slate-500">{sub}</p>
+          <h2 className="text-3xl font-extrabold text-fg md:text-4xl">{title}</h2>
+          <p className="mt-2 text-muted">{sub}</p>
         </div>
         <div className="hidden gap-2 md:flex">
           {[-1, 1].map((d) => (
@@ -38,7 +38,7 @@ export default function CategoryRail({ title, sub, countLabel }: { title: string
               key={d}
               onClick={() => scrollBy(d)}
               aria-label={d < 0 ? "Previous" : "Next"}
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-300 text-brand-900 transition hover:border-brand-900 hover:bg-brand-900 hover:text-white"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-line-strong text-fg transition hover:border-primary hover:bg-primary hover:text-on-primary"
             >
               {d < 0 ? <ArrowLeft className="h-5 w-5" /> : <ArrowRight className="h-5 w-5" />}
             </button>
@@ -57,7 +57,7 @@ export default function CategoryRail({ title, sub, countLabel }: { title: string
               key={cat.id}
               href={`/schemes?category=${cat.id}`}
               onMouseMove={spotlight}
-              className="group relative flex h-72 w-64 shrink-0 snap-start flex-col justify-between overflow-hidden rounded-3xl bg-brand-950 p-6 text-white transition duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-brand-900/30 md:w-72"
+              className="group relative flex h-72 w-64 shrink-0 snap-start flex-col justify-between overflow-hidden rounded-3xl bg-brand-950 p-6 text-white transition duration-500 hover:-translate-y-1.5 ring-1 ring-white/5 hover:shadow-2xl hover:shadow-brand-900/30 md:w-72"
             >
               {/* spotlight following the mouse */}
               <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 [background:radial-gradient(260px_circle_at_var(--x)_var(--y),rgba(242,181,68,0.18),transparent_60%)]" />

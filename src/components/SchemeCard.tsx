@@ -6,7 +6,7 @@ import { useSaved } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
 import type { Scheme } from "@/lib/types";
 import OptionIcon from "./Icon";
-import { Bookmark, Check } from "lucide-react";
+import { ArrowRight, Bookmark, Check } from "lucide-react";
 
 export default function SchemeCard({ scheme, eligible = false }: { scheme: Scheme; eligible?: boolean }) {
   const { t, tr } = useLang();
@@ -15,36 +15,40 @@ export default function SchemeCard({ scheme, eligible = false }: { scheme: Schem
   const saved = isSaved(scheme.id);
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-brand-200 hover:shadow-lg hover:shadow-brand-900/5">
+    <article className="group relative flex flex-col rounded-2xl border border-line bg-surface p-5 transition duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-xl hover:shadow-brand-950/5 dark:hover:shadow-black/30">
       <div className="flex items-start justify-between gap-3">
-        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${cat?.color}`}>
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${cat?.color}`}>
           {cat && <OptionIcon id={cat.id} className="h-3.5 w-3.5" />} {cat && tr(cat.label)}
         </span>
         {eligible && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-bold text-emerald-700"><Check className="h-3.5 w-3.5" /> {t("likely_eligible")}</span>
+          <span className="inline-flex items-center gap-1 rounded-full bg-ok-soft px-2.5 py-1 text-xs font-bold text-ok">
+            <Check className="h-3.5 w-3.5" strokeWidth={3} /> {t("likely_eligible")}
+          </span>
         )}
       </div>
 
-      <h3 className="mt-3 text-lg font-bold leading-snug text-ink">{tr(scheme.name)}</h3>
-      <p className="mt-1 text-sm text-gray-600">{tr(scheme.summary)}</p>
+      <h3 className="mt-3 text-lg font-bold leading-snug text-fg">{tr(scheme.name)}</h3>
+      <p className="mt-1 text-sm leading-relaxed text-fg-2">{tr(scheme.summary)}</p>
 
-      <div className="mt-4 border-l-2 border-accent-400 bg-accent-50 px-3 py-2.5 text-sm font-medium text-ink">{tr(scheme.benefit)}</div>
+      <div className="mt-4 rounded-r-lg border-l-[3px] border-accent-400 bg-warn-soft px-3 py-2.5 text-sm font-semibold text-fg">{tr(scheme.benefit)}</div>
 
-      <div className="mt-auto flex items-center gap-2 pt-4">
+      <div className="mt-auto flex items-center gap-2 pt-5">
         <Link
           href={`/schemes/${scheme.id}`}
-          className="flex-1 rounded-xl bg-brand-700 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-brand-800"
+          className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-on-primary transition hover:bg-primary-hover"
         >
-          {t("view_details")}
+          {t("view_details")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
         </Link>
         <button
           onClick={() => toggle(scheme.id)}
           aria-pressed={saved}
-          className={`rounded-xl border px-3 py-2.5 text-sm font-semibold transition ${
-            saved ? "border-brand-600 bg-brand-50 text-brand-800" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+          aria-label={saved ? t("saved") : t("save")}
+          className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold transition ${
+            saved ? "border-link bg-tint text-link" : "border-line-strong text-fg-2 hover:bg-surface-2"
           }`}
         >
-          <span className="inline-flex items-center gap-1.5"><Bookmark className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />{saved ? t("saved") : t("save")}</span>
+          <Bookmark className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />
+          {saved ? t("saved") : t("save")}
         </button>
       </div>
     </article>

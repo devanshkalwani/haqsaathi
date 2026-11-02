@@ -25,11 +25,11 @@ export default async function EditScheme({ params, searchParams }: PageProps<"/a
 
   return (
     <div>
-      <Link href="/admin" className="text-sm font-semibold text-brand-700 hover:underline">
+      <Link href="/admin" className="text-sm font-semibold text-link hover:underline">
         ← Back to admin
       </Link>
       <h1 className="mt-2 text-3xl font-extrabold">{isNew ? "Add scheme" : `Edit: ${s!.name.en}`}</h1>
-      {error && <p className="mt-4 rounded-xl bg-rose-50 p-3 font-semibold text-rose-700">⚠️ {error}</p>}
+      {error && <p className="mt-4 rounded-xl bg-bad-soft p-3 font-semibold text-bad">⚠️ {error}</p>}
 
       <form action={saveScheme} className="mt-6 space-y-6">
         <input type="hidden" name="original_id" value={isNew ? "" : s!.id} />
@@ -80,7 +80,7 @@ export default async function EditScheme({ params, searchParams }: PageProps<"/a
         </Box>
 
         <Box title="Lists">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted">
             One item per line, written as <code>English | Hindi</code>
           </p>
           <Field label="Who can apply">
@@ -114,7 +114,7 @@ export default async function EditScheme({ params, searchParams }: PageProps<"/a
         </Box>
 
         <Box title="Eligibility rules (JSON)">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted">
             A list of rules. The user is eligible if they match <b>any one</b> rule. Fields: ageMin, ageMax, genders, areas, occupations,
             categories, incomeMax, needFlags, excludeFlags. See <code>src/lib/types.ts</code>.
           </p>
@@ -143,8 +143,8 @@ export default async function EditScheme({ params, searchParams }: PageProps<"/a
         </Box>
 
         <div className="flex gap-3">
-          <button className="rounded-xl bg-brand-700 px-6 py-3 font-bold text-white hover:bg-brand-800">💾 Save</button>
-          <Link href="/admin" className="rounded-xl border-2 border-gray-200 px-6 py-3 font-semibold">
+          <button className="rounded-xl bg-primary px-6 py-3 font-bold text-on-primary hover:bg-primary-hover">💾 Save</button>
+          <Link href="/admin" className="rounded-xl border-2 border-line px-6 py-3 font-semibold">
             Cancel
           </Link>
         </div>
@@ -153,19 +153,19 @@ export default async function EditScheme({ params, searchParams }: PageProps<"/a
       {!isNew && (
         <form action={deleteScheme} className="mt-10 border-t pt-6">
           <input type="hidden" name="id" value={s!.id} />
-          <p className="text-sm text-gray-500">Tip: to hide a scheme, untick “Show on public site” instead of deleting.</p>
-          <button className="mt-2 text-sm font-semibold text-rose-600 hover:underline">Delete this scheme permanently</button>
+          <p className="text-sm text-muted">Tip: to hide a scheme, untick “Show on public site” instead of deleting.</p>
+          <button className="mt-2 text-sm font-semibold text-bad hover:underline">Delete this scheme permanently</button>
         </form>
       )}
     </div>
   );
 }
 
-const input = "w-full rounded-xl border-2 border-gray-200 bg-white px-3 py-2 outline-none focus:border-brand-600";
+const input = "w-full rounded-xl border-2 border-line-strong bg-surface px-3 py-2 text-fg outline-none focus:border-link";
 
 function Box({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="space-y-4 rounded-2xl border border-black/5 bg-white p-5">
+    <section className="space-y-4 rounded-2xl border border-line bg-surface p-5">
       <h2 className="text-lg font-bold">{title}</h2>
       {children}
     </section>
@@ -179,7 +179,7 @@ function Grid({ children }: { children: React.ReactNode }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm font-semibold text-gray-700">{label}</span>
+      <span className="mb-1 block text-sm font-semibold text-fg-2">{label}</span>
       {children}
     </label>
   );

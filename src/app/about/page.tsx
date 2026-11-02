@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight, Compass, HandHeart, Info, Plus, TriangleAlert, type LucideIcon } from "lucide-react";
+import { PageHero, btn, card } from "@/components/ui";
 import { useLang } from "@/lib/i18n";
 
 const CONTENT = {
@@ -41,35 +42,52 @@ const CONTENT = {
   },
 };
 
+const BLOCK_ICONS: LucideIcon[] = [TriangleAlert, Compass, HandHeart, Info];
+
 export default function AboutPage() {
   const { lang, t } = useLang();
   const c = CONTENT[lang];
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-extrabold text-brand-950">{c.title}</h1>
-      <div className="mt-6 space-y-4">
-        {c.blocks.map(([h, p]) => (
-          <section key={h} className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="text-lg font-bold text-brand-900">{h}</h2>
-            <p className="mt-2 leading-relaxed text-slate-600">{p}</p>
-          </section>
-        ))}
+    <div>
+      <PageHero icon={Info} title={c.title} sub={t("tagline")} narrow />
+      <div className="mx-auto max-w-4xl px-4">
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {c.blocks.map(([h, p], i) => {
+            const Icon = BLOCK_ICONS[i];
+            return (
+              <section key={h} className={`${card} p-6`}>
+                <h2 className="flex items-center gap-3 text-lg font-bold text-fg">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-tint text-link">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  {h}
+                </h2>
+                <p className="mt-3 leading-relaxed text-fg-2">{p}</p>
+              </section>
+            );
+          })}
+        </div>
+
+        <h2 id="faq" className="mt-14 scroll-mt-24 text-2xl font-extrabold text-fg md:text-3xl">
+          {c.faqTitle}
+        </h2>
+        <div className={`${card} mt-5 divide-y divide-line`}>
+          {c.faq.map(([q, a]) => (
+            <details key={q} className="group p-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-fg">
+                {q}
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-tint text-link transition group-open:rotate-45">
+                  <Plus className="h-4 w-4" />
+                </span>
+              </summary>
+              <p className="mt-3 leading-relaxed text-fg-2">{a}</p>
+            </details>
+          ))}
+        </div>
+        <Link href="/check" className={`${btn.accent} mt-10`}>
+          {t("hero_cta")} <ArrowRight className="h-5 w-5" />
+        </Link>
       </div>
-      <h2 id="faq" className="mt-12 scroll-mt-24 text-2xl font-extrabold text-brand-950">{c.faqTitle}</h2>
-      <div className="mt-4 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
-        {c.faq.map(([q, a]) => (
-          <details key={q} className="group p-5">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold text-slate-900">
-              {q}
-              <Plus className="h-5 w-5 shrink-0 text-brand-700 transition group-open:rotate-45" />
-            </summary>
-            <p className="mt-3 leading-relaxed text-slate-600">{a}</p>
-          </details>
-        ))}
-      </div>
-      <Link href="/check" className="mt-8 inline-flex items-center gap-2 rounded-xl bg-accent-400 px-6 py-3.5 font-bold text-brand-950 hover:bg-accent-500">
-        {t("hero_cta")} <ArrowRight className="h-5 w-5" />
-      </Link>
     </div>
   );
 }

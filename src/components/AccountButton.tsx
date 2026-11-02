@@ -33,7 +33,7 @@ export default function AccountButton() {
 
   if (!user) {
     return (
-      <Link href="/login" className="whitespace-nowrap rounded-lg bg-brand-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800">
+      <Link href="/login" className="flex h-9 items-center whitespace-nowrap rounded-lg bg-primary px-3 sm:h-10 sm:px-4 text-sm font-bold text-on-primary transition hover:bg-primary-hover">
         {t("login")}
       </Link>
     );
@@ -46,17 +46,17 @@ export default function AccountButton() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={label}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-900 text-base font-bold uppercase text-accent-400 ring-2 ring-brand-100"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-900 text-base font-bold uppercase text-accent-400 ring-2 ring-line-strong"
       >
         {label.charAt(0) || "U"}
       </button>
       {open && (
-        <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-xl">
-          <div className="border-b border-gray-100 px-4 py-3">
-            <p className="truncate font-bold text-ink">{label}</p>
-            <p className="truncate text-xs text-gray-500">{user.email}</p>
+        <div className="absolute right-0 top-12 w-56 overflow-hidden rounded-2xl border border-line bg-surface shadow-xl shadow-black/10">
+          <div className="border-b border-line px-4 py-3">
+            <p className="truncate font-bold text-fg">{label}</p>
+            <p className="truncate text-xs text-muted">{user.email}</p>
           </div>
-          <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-3 font-semibold text-gray-700 hover:bg-gray-50">
+          <Link href="/dashboard" onClick={() => setOpen(false)} className="block px-4 py-3 font-semibold text-fg-2 hover:bg-surface-2">
             <LayoutDashboard className="mr-2 inline h-4 w-4" />{t("nav_dashboard")}
           </Link>
           <button
@@ -65,7 +65,7 @@ export default function AccountButton() {
               await signOut();
               router.push("/");
             }}
-            className="block w-full px-4 py-3 text-left font-semibold text-rose-700 hover:bg-rose-50"
+            className="block w-full px-4 py-3 text-left font-semibold text-bad hover:bg-bad-soft"
           >
             <LogOut className="mr-2 inline h-4 w-4" />{t("logout")}
           </button>

@@ -81,13 +81,13 @@ export default function StoryScroll({ steps, lang }: { steps: Step[]; lang: "en"
             <div className={`transition-all duration-500 ${active === i ? "lg:opacity-100" : "lg:opacity-30"}`}>
               <span
                 className={`inline-flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold transition-colors duration-500 ${
-                  active === i ? "bg-accent-400 text-brand-950" : "bg-white text-slate-500 ring-1 ring-slate-200"
+                  active === i ? "bg-accent-400 text-brand-950" : "bg-surface text-muted ring-1 ring-line"
                 }`}
               >
                 0{i + 1}
               </span>
-              <h3 className="mt-5 text-3xl font-extrabold text-brand-950 md:text-4xl">{s.title}</h3>
-              <p className="mt-3 max-w-md text-lg leading-relaxed text-slate-600">{s.body}</p>
+              <h3 className="mt-5 text-3xl font-extrabold text-fg md:text-4xl">{s.title}</h3>
+              <p className="mt-3 max-w-md text-lg leading-relaxed text-fg-2">{s.body}</p>
               {/* small screen for phones */}
               <div className="mt-8 flex justify-center lg:hidden">
                 <Phone screen={i} lang={lang} small />
@@ -103,11 +103,11 @@ export default function StoryScroll({ steps, lang }: { steps: Step[]; lang: "en"
 function Phone({ screen, lang, small = false }: { screen: number; lang: "en" | "hi"; small?: boolean }) {
   const c = SCREENS[lang];
   return (
-    <div className={`relative rounded-[2.6rem] border-[7px] border-brand-950 bg-brand-950 shadow-2xl shadow-brand-950/40 ${small ? "w-64" : "w-[19rem]"}`}>
+    <div className={`relative rounded-[2.6rem] border-[7px] border-brand-950 bg-brand-950 shadow-2xl shadow-brand-950/40 ring-1 ring-white/10 ${small ? "w-64" : "w-[19rem]"}`}>
       <div className="absolute left-1/2 top-2 z-10 h-5 w-20 -translate-x-1/2 rounded-full bg-brand-950" />
       <div className={`relative overflow-hidden rounded-[2.1rem] bg-paper ${small ? "h-[27rem]" : "h-[36rem]"}`}>
         <div className="flex items-center gap-2 bg-brand-900 px-5 pb-4 pt-9 text-white">
-          <Logo size={26} />
+          <Logo size={26} tone="marigold" />
           <span className="font-extrabold">
             Haq<span className="text-accent-400">Saathi</span>
           </span>

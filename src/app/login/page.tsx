@@ -55,13 +55,12 @@ export default function LoginPage() {
 
   return (
     <div className="relative overflow-hidden">
-      
       <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 md:grid-cols-2 md:py-16">
         {/* Left: why log in */}
         <div className="relative hidden overflow-hidden rounded-2xl bg-brand-950 p-10 text-white md:block">
           <div className="bg-grid pointer-events-none absolute inset-0" />
           <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-700/60 blur-[90px]" />
-          <span className="relative block"><Logo size={48} /></span>
+          <span className="relative block"><Logo size={48} tone="marigold" /></span>
           <h2 className="relative mt-6 text-3xl font-extrabold leading-tight">{t("login_title")}</h2>
           <p className="relative mt-3 text-brand-100/80">{t("tagline")}</p>
           <ul className="relative mt-8 space-y-3">
@@ -78,18 +77,19 @@ export default function LoginPage() {
         </div>
 
         {/* Right: the form */}
-        <div className="flex flex-col justify-center rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-brand-900/5 md:p-10">
+        <div className="flex flex-col justify-center rounded-2xl border border-line bg-surface p-6 shadow-xl shadow-brand-950/5 dark:shadow-black/30 md:p-10">
           {!available ? (
             <div>
-              <h1 className="text-2xl font-extrabold">{t("login_title")}</h1>
-              <p className="mt-3 rounded-xl bg-amber-50 p-4 text-amber-900">{t("login_unavailable")}</p>
+              <h1 className="text-2xl font-extrabold text-fg">{t("login_title")}</h1>
+              <p className="mt-3 rounded-xl bg-warn-soft p-4 text-warn-fg">{t("login_unavailable")}</p>
             </div>
           ) : step === "email" ? (
             <form onSubmit={submitEmail}>
-              <h1 className="text-2xl font-extrabold md:text-3xl">{t("login_title")}</h1>
-              <p className="mt-2 text-gray-600">{t("login_sub")}</p>
-              <label className="mt-8 block text-sm font-semibold text-gray-700">{t("email_label")}</label>
+              <h1 className="text-2xl font-extrabold text-fg md:text-3xl">{t("login_title")}</h1>
+              <p className="mt-2 text-fg-2">{t("login_sub")}</p>
+              <label htmlFor="email" className="mt-8 block text-sm font-semibold text-fg-2">{t("email_label")}</label>
               <input
+                id="email"
                 type="email"
                 required
                 autoFocus
@@ -97,17 +97,17 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@gmail.com"
-                className="mt-2 w-full rounded-xl border-2 border-slate-200 px-5 py-4 text-lg outline-none focus:border-brand-600"
+                className="mt-2 w-full rounded-xl border-2 border-line-strong bg-surface px-5 py-4 text-fg placeholder:text-muted text-lg outline-none focus:border-link"
               />
-              <button disabled={busy} className="mt-4 w-full rounded-xl bg-brand-900 py-4 text-lg font-bold text-white transition hover:bg-brand-800 disabled:opacity-60">
+              <button disabled={busy} className="mt-4 w-full rounded-xl bg-primary py-4 text-lg font-bold text-on-primary transition hover:bg-primary-hover disabled:opacity-60">
                 {busy ? t("sending") : `${t("send_code")} →`}
               </button>
             </form>
           ) : step === "code" ? (
             <form onSubmit={submitCode}>
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><MailCheck className="h-6 w-6" /></span>
-              <h1 className="mt-3 text-2xl font-extrabold">{t("code_label")}</h1>
-              <p className="mt-2 text-gray-600">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-tint text-link"><MailCheck className="h-6 w-6" /></span>
+              <h1 className="mt-3 text-2xl font-extrabold text-fg">{t("code_label")}</h1>
+              <p className="mt-2 text-fg-2">
                 {t("code_sent")} <b>{email}</b>
               </p>
               <input
@@ -119,12 +119,12 @@ export default function LoginPage() {
                 value={code}
                 onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                 placeholder="••••••"
-                className="mt-6 w-full rounded-xl border-2 border-slate-200 px-5 py-4 text-center text-3xl font-bold tracking-[0.5em] outline-none focus:border-brand-600"
+                className="mt-6 w-full rounded-xl border-2 border-line-strong bg-surface px-5 py-4 text-fg placeholder:text-muted text-center text-3xl font-bold tracking-[0.5em] outline-none focus:border-link"
               />
-              <p className="mt-2 text-sm text-gray-500">{t("code_hint")}</p>
+              <p className="mt-2 text-sm text-muted">{t("code_hint")}</p>
               <button
                 disabled={busy || code.length < 6}
-                className="mt-4 w-full rounded-xl bg-brand-900 py-4 text-lg font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
+                className="mt-4 w-full rounded-xl bg-primary py-4 text-lg font-bold text-on-primary transition hover:bg-primary-hover disabled:opacity-60"
               >
                 {busy ? t("checking") : t("verify")}
               </button>
@@ -135,15 +135,15 @@ export default function LoginPage() {
                   setCode("");
                   setError(null);
                 }}
-                className="mt-3 w-full text-sm font-semibold text-brand-700 hover:underline"
+                className="mt-3 w-full text-sm font-semibold text-link hover:underline"
               >
                 {t("change_email")}
               </button>
             </form>
           ) : (
             <form onSubmit={submitName}>
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><UserRound className="h-6 w-6" /></span>
-              <h1 className="mt-3 text-2xl font-extrabold">{t("name_title")}</h1>
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-tint text-link"><UserRound className="h-6 w-6" /></span>
+              <h1 className="mt-3 text-2xl font-extrabold text-fg">{t("name_title")}</h1>
               <input
                 autoFocus
                 required
@@ -151,20 +151,20 @@ export default function LoginPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t("name_ph")}
-                className="mt-6 w-full rounded-xl border-2 border-slate-200 px-5 py-4 text-lg outline-none focus:border-brand-600"
+                className="mt-6 w-full rounded-xl border-2 border-line-strong bg-surface px-5 py-4 text-fg placeholder:text-muted text-lg outline-none focus:border-link"
               />
-              <button className="mt-4 w-full rounded-xl bg-brand-900 py-4 text-lg font-bold text-white hover:bg-brand-800">{t("continue")} →</button>
+              <button className="mt-4 w-full rounded-xl bg-primary py-4 text-lg font-bold text-on-primary transition hover:bg-primary-hover">{t("continue")} →</button>
             </form>
           )}
 
-          {error && <p className="mt-4 rounded-xl bg-rose-50 p-3 text-sm font-semibold text-rose-700">{error}</p>}
+          {error && <p className="mt-4 rounded-xl bg-bad-soft p-3 text-sm font-semibold text-bad">{error}</p>}
 
           {step !== "name" && (
-            <div className="mt-8 border-t border-gray-100 pt-6 text-center">
-              <Link href="/dashboard" className="font-semibold text-gray-700 hover:text-brand-700">
+            <div className="mt-8 border-t border-line pt-6 text-center">
+              <Link href="/dashboard" className="font-semibold text-fg-2 hover:text-link">
                 {t("continue_guest")} →
               </Link>
-              <p className="mt-2 text-sm text-gray-500">{t("guest_note")}</p>
+              <p className="mt-2 text-sm text-muted">{t("guest_note")}</p>
             </div>
           )}
         </div>

@@ -17,6 +17,16 @@ const UI = {
   nav_schemes: { en: "All Schemes", hi: "सभी योजनाएं" },
   nav_ask: { en: "Ask Saathi", hi: "साथी से पूछें" },
   nav_checklist: { en: "My List", hi: "मेरी सूची" },
+  theme_dark: { en: "Switch to dark mode", hi: "डार्क मोड चालू करें" },
+  theme_light: { en: "Switch to light mode", hi: "लाइट मोड चालू करें" },
+  video_replay: { en: "Watch again", hi: "फिर से देखें" },
+  sound_on: { en: "Sound on", hi: "आवाज़ चालू" },
+  sound_off: { en: "Sound off", hi: "आवाज़ बंद" },
+  video_label: { en: "12-second introduction to HaqSaathi", hi: "हक़साथी का 12 सेकंड का परिचय वीडियो" },
+  schemes_sub: {
+    en: "Every scheme with what you get, who can apply, documents and steps. All in one place.",
+    hi: "हर योजना: क्या मिलेगा, कौन आवेदन कर सकता है, दस्तावेज़ और तरीका। सब एक जगह।",
+  },
   tagline: { en: "Your companion for every benefit you deserve", hi: "आपके हक़ के हर लाभ का साथी" },
 
   // Home

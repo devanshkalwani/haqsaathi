@@ -32,10 +32,10 @@ const C = {
     h1a: "Get the government benefits",
     h1b: "you deserve.",
     sub: "Answer 8 simple questions. See every scheme you qualify for, and exactly how to get it.",
-    chips: ["Always free", "Never asks for OTP or Aadhaar", "Official links only"],
+    chips: ["Full details of every scheme", "Never asks for OTP or Aadhaar", "Official links only"],
     doTitle: "What HaqSaathi does",
     doSub: "Four simple things, done for you.",
-    stats: ["simple questions", "minutes to your list", "schemes explained", "cost to you, always"],
+    stats: ["simple questions", "minutes to your list", "schemes fully explained", "of schemes link the official source"],
     storyEyebrow: "How it works",
     storyTitle: "From questions to benefits, in three steps",
     story: [
@@ -53,7 +53,7 @@ const C = {
       ["Apply", "On the official site", "Step-by-step help and the official government link. No agents. No fees."],
     ],
     ctaTitle: "Find your benefits today",
-    ctaSub: "2 minutes. Free. In your language.",
+    ctaSub: "What you get, who can apply, which documents, and where to apply. All of it, clearly.",
     faq: "Questions? Read the FAQ",
   },
   hi: {
@@ -61,10 +61,10 @@ const C = {
     h1a: "अपने हक़ की सरकारी योजनाएं",
     h1b: "आसानी से पाएं।",
     sub: "8 आसान सवालों के जवाब दें। देखें आप किन योजनाओं के पात्र हैं, और उन्हें कैसे पाएं।",
-    chips: ["हमेशा मुफ्त", "OTP या आधार कभी नहीं मांगते", "सिर्फ आधिकारिक लिंक"],
+    chips: ["हर योजना की पूरी जानकारी", "OTP या आधार कभी नहीं मांगते", "सिर्फ आधिकारिक लिंक"],
     doTitle: "हक़साथी क्या करता है",
     doSub: "चार आसान काम, आपके लिए।",
-    stats: ["आसान सवाल", "मिनट में आपकी सूची", "योजनाएं आसान भाषा में", "आपका खर्च, हमेशा"],
+    stats: ["आसान सवाल", "मिनट में आपकी सूची", "योजनाएं पूरी जानकारी के साथ", "योजनाओं के साथ आधिकारिक स्रोत"],
     storyEyebrow: "यह कैसे काम करता है",
     storyTitle: "सवालों से लाभ तक, तीन कदम में",
     story: [
@@ -82,7 +82,7 @@ const C = {
       ["आवेदन", "आधिकारिक साइट पर", "कदम-दर-कदम मदद और आधिकारिक सरकारी लिंक। कोई एजेंट नहीं। कोई फीस नहीं।"],
     ],
     ctaTitle: "आज ही अपने लाभ जानें",
-    ctaSub: "2 मिनट। मुफ्त। आपकी भाषा में।",
+    ctaSub: "क्या मिलेगा, कौन आवेदन कर सकता है, कौन से दस्तावेज़, और कहां आवेदन करें। सब कुछ, साफ़-साफ़।",
     faq: "सवाल हैं? FAQ पढ़ें",
   },
 };
@@ -143,7 +143,7 @@ export default function HomePage() {
           </div>
 
           <div className="animate-fade-up [animation-delay:250ms]">
-            <IntroVideo />
+            <IntroVideo key={lang} />
           </div>
         </div>
       </section>
@@ -151,18 +151,18 @@ export default function HomePage() {
       {/* ---------------- Key numbers, overlapping the hero ---------------- */}
       <section className="relative z-10 mx-auto -mt-20 max-w-6xl px-4">
         <Reveal>
-          <div className="grid grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-2xl shadow-brand-950/10 ring-1 ring-slate-200 md:grid-cols-4">
+          <div className="grid grid-cols-2 overflow-hidden rounded-3xl bg-surface shadow-2xl shadow-brand-950/10 ring-1 ring-line dark:shadow-black/40 md:grid-cols-4">
             {[
               { n: 8, pre: "", suf: "" },
               { n: 2, pre: "", suf: "" },
               { n: schemes.length, pre: "", suf: "+" },
-              { n: 0, pre: "₹", suf: "" },
+              { n: 100, pre: "", suf: "%" },
             ].map((x, i) => (
-              <div key={i} className={`group relative p-6 text-center transition-colors duration-300 hover:bg-brand-50/60 md:p-8 ${i % 2 === 0 ? "border-r border-slate-100" : ""} ${i < 2 ? "border-b border-slate-100 md:border-b-0" : ""} ${i === 1 ? "md:border-r" : ""}`}>
-                <p className="text-4xl font-extrabold text-brand-950 md:text-5xl">
+              <div key={i} className={`group relative p-6 text-center transition-colors duration-300 hover:bg-surface-2 md:p-8 ${i % 2 === 0 ? "border-r border-line" : ""} ${i < 2 ? "border-b border-line md:border-b-0" : ""} ${i === 1 ? "md:border-r" : ""}`}>
+                <p className="text-4xl font-extrabold text-fg md:text-5xl">
                   <CountUp to={x.n} prefix={x.pre} suffix={x.suf} />
                 </p>
-                <p className="mt-2 text-sm font-medium text-slate-500">{c.stats[i]}</p>
+                <p className="mt-2 text-sm font-medium text-muted">{c.stats[i]}</p>
                 <span className="absolute inset-x-8 bottom-0 h-0.5 origin-left scale-x-0 rounded-full bg-accent-400 transition-transform duration-500 group-hover:scale-x-100" />
               </div>
             ))}
@@ -173,8 +173,8 @@ export default function HomePage() {
       {/* ---------------- What we do: hover-expanding panels ---------------- */}
       <section className="mx-auto max-w-6xl px-4 pt-24 md:pt-32">
         <Reveal className="mb-10 flex flex-col justify-between gap-3 md:flex-row md:items-end">
-          <h2 className="text-3xl font-extrabold text-brand-950 md:text-5xl">{c.doTitle}</h2>
-          <p className="text-lg text-slate-500">{c.doSub}</p>
+          <h2 className="text-3xl font-extrabold text-fg md:text-5xl">{c.doTitle}</h2>
+          <p className="text-lg text-muted">{c.doSub}</p>
         </Reveal>
         <Reveal delay={100}>
           <ExpandPanels panels={c.cards.map(([title, short, body], i) => ({ icon: CARD_ICONS[i], title, short, body }))} />
@@ -182,11 +182,11 @@ export default function HomePage() {
       </section>
 
       {/* ---------------- How it works: pinned phone + scrolling steps ---------------- */}
-      <section className="relative mt-24 bg-gradient-to-b from-brand-50/70 via-brand-50/40 to-transparent py-20 md:mt-32 md:py-28">
+      <section className="relative mt-24 bg-gradient-to-b from-tint via-tint/50 to-transparent py-20 md:mt-32 md:py-28">
         <div className="mx-auto max-w-6xl px-4">
           <Reveal className="max-w-2xl">
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent-700">{c.storyEyebrow}</p>
-            <h2 className="mt-3 text-3xl font-extrabold text-brand-950 md:text-5xl">{c.storyTitle}</h2>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent-700 dark:text-accent-400">{c.storyEyebrow}</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-fg md:text-5xl">{c.storyTitle}</h2>
           </Reveal>
           <div className="mt-10 lg:mt-4">
             <StoryScroll lang={lang} steps={c.story.map(([title, body]) => ({ title, body }))} />
@@ -204,12 +204,12 @@ export default function HomePage() {
       {/* ---------------- Final call to action ---------------- */}
       <section className="mx-auto max-w-6xl px-4 pt-20 md:pt-28">
         <Reveal>
-          <div className="relative isolate overflow-hidden rounded-3xl bg-brand-950 px-6 py-14 text-center text-white md:px-14 md:py-20">
+          <div className="relative isolate overflow-hidden rounded-3xl bg-brand-950 px-6 py-14 text-center text-white ring-1 ring-white/5 md:px-14 md:py-20">
             <div className="bg-grid pointer-events-none absolute inset-0 -z-10" />
             <div className="animate-aurora pointer-events-none absolute -left-24 -top-24 -z-10 h-80 w-80 rounded-full bg-brand-600/50 blur-[100px]" />
             <div className="animate-aurora pointer-events-none absolute -bottom-24 -right-10 -z-10 h-72 w-72 rounded-full bg-sky-500/20 blur-[100px] [animation-delay:-8s]" />
             <h2 className="text-3xl font-extrabold md:text-5xl">{c.ctaTitle}</h2>
-            <p className="mt-3 text-lg text-brand-100/80">{c.ctaSub}</p>
+            <p className="mx-auto mt-3 max-w-xl text-lg text-brand-100/80">{c.ctaSub}</p>
             <Link
               href="/check"
               className="group relative mt-9 inline-flex items-center gap-2 overflow-hidden rounded-xl bg-accent-400 px-8 py-4 text-lg font-bold text-brand-950 shadow-lg shadow-accent-400/25 transition hover:-translate-y-0.5 hover:bg-accent-500"
@@ -221,7 +221,7 @@ export default function HomePage() {
           </div>
         </Reveal>
         <p className="mt-8 text-center">
-          <Link href="/about#faq" className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:underline">
+          <Link href="/about#faq" className="inline-flex items-center gap-1.5 text-sm font-semibold text-link hover:underline">
             <HelpCircle className="h-4 w-4" /> {c.faq}
           </Link>
         </p>

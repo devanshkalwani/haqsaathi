@@ -112,7 +112,7 @@ const body = new THREE.Mesh(
 );
 phone.add(body);
 const screenCanvas = document.createElement("canvas");
-screenCanvas.width = 520; screenCanvas.height = 1060;
+screenCanvas.width = 720; screenCanvas.height = 1468;
 const screenTex = new THREE.CanvasTexture(screenCanvas);
 screenTex.colorSpace = THREE.SRGBColorSpace;
 screenTex.anisotropy = 8;
@@ -135,69 +135,38 @@ const ring2 = new THREE.Mesh(
 ring2.position.z = -0.8;
 scene.add(ring2);
 
-const ROWS = HI
-  ? [["स्वास्थ्य बीमा", "₹5,00,000 तक"], ["किसान सहायता", "₹6,000 / साल"], ["वृद्धावस्था पेंशन", "हर महीने"], ["छात्रवृत्ति", "फीस + भत्ता"]]
-  : [["Health cover", "up to ₹5,00,000"], ["Farmer support", "₹6,000 / year"], ["Old-age pension", "every month"], ["Scholarship", "fees + allowance"]];
-
-function rr(g, x, y, w, h, r) {
-  g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r);
-  g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath();
+// Real screenshots of the website (light mode, 360x734 phone, 2x), made by scripts/intro-video/capture-site.cjs
+const SHOTS = {};
+function loadShot(name) {
+  return new Promise((res) => {
+    const im = new Image();
+    im.onload = () => res((SHOTS[name] = im));
+    im.src = `site/${LANG}-${name}.png`;
+  });
 }
 
+// Which screen shows when: quiz -> results -> scheme details (scrolling)
+const SLIDE1 = [6.5, 6.9], SLIDE2 = [8.1, 8.5], SCROLL = [8.7, 9.7];
 function drawScreen(t) {
   const g = screenCanvas.getContext("2d");
-  const Wc = 520, Hc = 1060;
+  const Wc = 720, Hc = 1468;
   g.fillStyle = "#f7f6f2"; g.fillRect(0, 0, Wc, Hc);
-  // top bar
-  g.fillStyle = "#0f1e42"; g.fillRect(0, 0, Wc, 150);
-  g.fillStyle = "#f2b544"; rr(g, 34, 52, 56, 56, 14); g.fill();
-  g.strokeStyle = "#0f1e42"; g.lineWidth = 7; g.lineCap = "round"; g.lineJoin = "round";
-  g.beginPath(); g.moveTo(48, 81); g.lineTo(58, 92); g.lineTo(78, 68); g.stroke();
-  g.fillStyle = "#fff"; g.font = `800 34px 'Jakarta'`; g.fillText("HaqSaathi", 108, 92);
+  const s1 = ease(prog(t, SLIDE1[0], SLIDE1[1]));
+  const s2 = ease(prog(t, SLIDE2[0], SLIDE2[1]));
+  const scroll = ease(prog(t, SCROLL[0], SCROLL[1])) * 1150;
+  const draw = (im, x, sy = 0) => im && g.drawImage(im, 0, sy, Wc, Hc, x, 0, Wc, Hc);
+  if (s1 < 1) draw(SHOTS.check, -s1 * Wc);
+  if (s1 > 0 && s2 < 1) draw(SHOTS.results, (1 - s1) * Wc - s2 * Wc);
+  if (s2 > 0) draw(SHOTS.detail, (1 - s2) * Wc, scroll);
 
-  // scanning phase (before results)
-  const scan = prog(t, 4.2, 6.2);
-  const found = prog(t, 6.2, 6.6);
-  g.fillStyle = "#0f172a"; g.font = `800 38px ${FONT}`;
-  if (found < 1) {
-    g.globalAlpha = 1 - found;
-    g.fillText(HI ? "आपकी योजनाएं ढूंढ रहे हैं…" : "Finding your schemes…", 34, 230);
-    g.fillStyle = "#dce5f3"; rr(g, 34, 262, 452, 16, 8); g.fill();
-    g.fillStyle = "#2a4a94"; rr(g, 34, 262, Math.max(16, 452 * scan), 16, 8); g.fill();
-    g.globalAlpha = 1;
-  }
-  if (found > 0) {
-    g.globalAlpha = found;
-    g.fillStyle = "#0f172a";
-    g.fillText(HI ? "आप 4 योजनाओं के पात्र हैं" : "You qualify for 4 schemes", 34, 230);
-    g.fillStyle = "#64748b"; g.font = `500 26px ${FONT}`;
-    g.fillText(HI ? "आपके जवाबों के आधार पर" : "Based on your answers", 34, 272);
-    g.globalAlpha = 1;
-  }
-  // rows
-  ROWS.forEach(([name, amt], i) => {
-    const a = easeOut(prog(t, 6.5 + i * 0.45, 7.1 + i * 0.45));
-    if (a <= 0) return;
-    const y = 320 + i * 150 + (1 - a) * 40;
-    g.globalAlpha = a;
-    g.fillStyle = "#ffffff"; rr(g, 26, y, 468, 128, 22); g.fill();
-    g.strokeStyle = "#e2e8f0"; g.lineWidth = 2; rr(g, 26, y, 468, 128, 22); g.stroke();
-    g.fillStyle = "#dcfce7"; g.beginPath(); g.arc(88, y + 64, 32, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = "#16a34a"; g.lineWidth = 7;
-    g.beginPath(); g.moveTo(74, y + 64); g.lineTo(84, y + 75); g.lineTo(103, y + 52); g.stroke();
-    g.fillStyle = "#0f172a"; g.font = `700 32px ${FONT}`; g.fillText(name, 140, y + 56);
-    g.fillStyle = "#1e3a7b"; g.font = `700 27px ${FONT}`; g.fillText(amt, 140, y + 98);
-    g.globalAlpha = 1;
-  });
-  // button
-  const b = prog(t, 8.4, 8.9);
-  if (b > 0) {
-    g.globalAlpha = b;
-    g.fillStyle = "#f2b544"; rr(g, 26, 940, 468, 86, 22); g.fill();
-    g.fillStyle = "#0f1e42"; g.font = `800 32px ${FONT}`;
-    const label = HI ? "आवेदन कैसे करें →" : "How to apply →";
-    g.fillText(label, 260 - g.measureText(label).width / 2, 994);
-    g.globalAlpha = 1;
+  // a soft "tap" on the selected answer in the quiz
+  const tap = prog(t, 5.5, 6.2);
+  if (tap > 0 && tap < 1 && s1 < 1) {
+    g.save();
+    g.globalAlpha = 0.35 * (1 - tap);
+    g.fillStyle = "#2c4c99";
+    g.beginPath(); g.arc(300 - s1 * Wc, 658, 40 + tap * 120, 0, Math.PI * 2); g.fill();
+    g.restore();
   }
   screenTex.needsUpdate = true;
 }
@@ -206,13 +175,15 @@ function drawScreen(t) {
 const CAPS = HI
   ? [
       [0.3, 3.4, "करोड़ों भारतीय", "अपने हक़ की सरकारी मदद से चूक जाते हैं।"],
-      [3.7, 6.3, "उलझे नियम, ढेर सारे कागज़।", "हक़साथी सब आसान कर देता है।"],
-      [6.6, 9.4, "8 आसान सवालों के जवाब दें।", "देखें आप किन योजनाओं के पात्र हैं।"],
+      [3.7, 6.5, "कुछ आसान सवालों के जवाब दें।", "टैप करें या बोलें। आधार नंबर की ज़रूरत नहीं।"],
+      [6.8, 8.3, "देखें आप किन योजनाओं के पात्र हैं।", "कितना लाभ मिलेगा, साफ़-साफ़।"],
+      [8.5, 9.8, "दस्तावेज़ और हर कदम जानें।", "फिर आधिकारिक वेबसाइट पर आवेदन करें।"],
     ]
   : [
       [0.3, 3.4, "Crores of Indians miss", "government benefits they deserve."],
-      [3.7, 6.3, "Confusing rules. Piles of paper.", "HaqSaathi makes it simple."],
-      [6.6, 9.4, "Answer 8 simple questions.", "See every scheme you qualify for."],
+      [3.7, 6.5, "Answer a few simple questions.", "Tap or speak. No Aadhaar number needed."],
+      [6.8, 8.3, "See every scheme you qualify for.", "With the exact benefit amount."],
+      [8.5, 9.8, "Know the documents and every step.", "Then apply on the official website."],
     ];
 const capEl = document.getElementById("cap");
 const endEl = document.getElementById("end");
@@ -231,7 +202,7 @@ function captions(t) {
   capEl.innerHTML = html;
   capEl.style.opacity = op;
   capEl.style.transform = `translateY(calc(-50% + ${(1 - op) * 14}px))`;
-  const e = easeOut(prog(t, 9.7, 10.6));
+  const e = easeOut(prog(t, 9.95, 10.8));
   endEl.style.opacity = e;
   endEl.style.transform = `scale(${0.94 + 0.06 * e})`;
 }
@@ -241,8 +212,9 @@ const PHONE_TARGET = new THREE.Vector3(0, 0, 0);
 const PX = 2.5;
 window.renderAt = function (t) {
   // camera: slow cinematic drift
-  const cz = lerp(12.5, 8.4, ease(prog(t, 0, 6))) + ease(prog(t, 9.3, 12)) * 3;
-  camera.position.set(Math.sin(t * 0.22) * 1.2, 0.4 + Math.cos(t * 0.17) * 0.3, cz);
+  const cz = lerp(12.5, 8.2, ease(prog(t, 0, 5.6))) + ease(prog(t, 9.7, 12)) * 3;
+  const sway = 1 - 0.8 * ease(prog(t, 4, 5.6)) * (1 - prog(t, 9.7, 10.5)); // hold steady while the screens are read
+  camera.position.set(Math.sin(t * 0.22) * 1.2 * sway, 0.4 * sway + Math.cos(t * 0.17) * 0.3 * sway, cz);
   camera.lookAt(0.6, 0, 0);
 
   particles.rotation.y = t * 0.02;
@@ -250,13 +222,13 @@ window.renderAt = function (t) {
 
   // phone appears 2.6–4.2, faces camera by ~6, recedes after 9.3
   const appear = ease(prog(t, 2.6, 4.2));
-  const recede = ease(prog(t, 9.3, 11));
-  const s = appear * (1 - recede) * 1.12;
+  const recede = ease(prog(t, 9.7, 11.2));
+  const s = appear * (1 - recede) * 1.04;
   phone.scale.setScalar(Math.max(0.0001, s));
   phone.position.set(PX * (1 - recede), lerp(-0.6, 0, appear) + recede * 0.4, -recede * 3);
   PHONE_TARGET.copy(phone.position);
-  phone.rotation.y = lerp(-1.6, 0, ease(prog(t, 2.6, 6))) + Math.sin(t * 0.8) * 0.08 * (1 - prog(t, 6, 7)) + Math.sin(t * 0.6) * 0.06;
-  phone.rotation.x = lerp(0.5, 0.06, ease(prog(t, 2.6, 5.5)));
+  phone.rotation.y = lerp(-1.6, -0.06, ease(prog(t, 2.6, 5.4))) + Math.sin(t * 0.8) * 0.08 * (1 - prog(t, 5, 6)) + Math.sin(t * 0.6) * 0.02;
+  phone.rotation.x = lerp(0.5, 0.02, ease(prog(t, 2.6, 5.2)));
   phone.rotation.z = lerp(-0.25, 0, ease(prog(t, 2.6, 5)));
   body.material.opacity = 1;
   drawScreen(t);
@@ -300,6 +272,7 @@ window.ready = document.fonts.ready.then(async () => {
     document.fonts.load("700 30px 'Noto Sans Devanagari'", "हक़"),
     document.fonts.load("500 30px 'Noto Sans Devanagari'", "हक़"),
   ]);
+  await Promise.all(["check", "results", "detail"].map(loadShot));
   // redraw document textures now that fonts are loaded
   docs.forEach((d, i) => {
     d.material[4].map = docTexture(DOC_TITLES[i % DOC_TITLES.length], hues[i % hues.length]);

@@ -1,14 +1,15 @@
 """
 Soundtrack for the 12-second HaqSaathi intro, synthesised from scratch (no samples, no licences).
 
-Story in sound (raag Bhupali: Sa Re Ga Pa Dha, Sa = D):
-  0.0-3.4  a calm, slightly wistful bansuri (bamboo flute) phrase over a soft tanpura drone
-  3.3-5.3  a smooth airy swell as the papers are pulled into the phone
-  4.4-6.2  quiet santoor arpeggio while HaqSaathi "checks the rules"
-  6.5-7.9  one bright santoor note per scheme found, soft tabla-like pulse underneath
-  9.6-12   a warm resolving chord, bell and the flute landing on high Sa as the logo appears
+One calm, consistent voice from start to end: a bansuri (bamboo flute) melody in raag Bhupali
+(Sa Re Ga Pa Dha, Sa = D) over a soft tanpura drone and a warm, low string pad.
+No percussion, bells or sound effects, so nothing jumps out.
 
-Mixed with a stereo convolution reverb, gentle compression and fades so the loop is seamless.
+  0.3-3.4   opening phrase, calm (the people who miss out)
+  3.7-6.4   the phrase rises (answering the questions)
+  6.7-9.6   brighter, reaching up (seeing the schemes, the documents)
+  9.9-12    the flute settles on high Sa as the logo appears, and fades
+
 Usage: python3 soundtrack.py out.wav   (needs numpy)
 """
 
@@ -104,7 +105,7 @@ def pad(freqs, length, attack=1.0, release=1.5):
     return out * smooth_env(n, attack, release)
 
 
-def bansuri(notes, length):
+def bansuri(notes, length, attack=0.6, release=0.9):
     """
     Bamboo flute. `notes` = list of (start_s, note_name, glide_s); each note holds until the next.
     Pitch glides (meend) between notes, delayed vibrato, breath noise that follows the tone.
@@ -135,7 +136,7 @@ def bansuri(notes, length):
     amp = np.ones(n)
     for st, _, _ in notes[1:]:  # small dip at each new note, like a tongued articulation
         amp *= 1 - 0.25 * np.exp(-(((tt - st) / 0.05) ** 2))
-    env = smooth_env(n, 0.6, 0.9) * amp * (1 + 0.05 * np.sin(2 * np.pi * 0.7 * tt))
+    env = smooth_env(n, attack, release) * amp * (1 + 0.05 * np.sin(2 * np.pi * 0.7 * tt))
     return (tone * 0.9 + breath * 0.1) * env
 
 
@@ -167,53 +168,37 @@ def riser(length):
 # ---------------------------------------------------------------- arrangement
 dry = np.zeros((2, N))
 
-# Tanpura: Pa, Sa', Sa', Sa every 0.85 s, fading in over the first 2 s
+# Tanpura: Pa, Sa', Sa', Sa every 0.85 s, steady the whole way through
 pattern = [SA * R["Pa"] / 2, SA, SA, SA / 2]
 for k, st in enumerate(np.arange(0.0, DUR, 0.85)):
-    g = 0.26 * min(1.0, 0.45 + st / 2.0)
+    g = 0.24 * min(1.0, 0.55 + st / 1.5)
     place(dry, tanpura(pattern[k % 4]), st, g, pan=[-0.35, 0.15, 0.3, -0.1][k % 4])
 
-# Opening: open fifth pad (Sa + Pa), calm, no minor colour
-place(dry, pad([SA / 2, SA * R["Pa"] / 2, SA], 5.0, attack=1.6, release=1.8), 0.0, 0.22)
+# Warm pad under everything: open fifth, then a gentle major colour for the second half
+place(dry, pad([SA / 2, SA * R["Pa"] / 2, SA], 7.2, attack=1.6, release=2.0), 0.0, 0.2)
+place(dry, pad([SA / 2, SA, SA * R["Ga"], SA * R["Pa"]], 6.4, attack=2.0, release=2.4), 5.6, 0.16)
 
-# Bansuri phrase 0.3 - 3.6 s: Ga ... Re (glide) ... Sa ... Dha_ (low) ... Sa (rest)
+FL = 0.14  # flute level: the lead, but never loud
+# Phrase 1 (calm): Ga . Re~ Sa . Dha_ Sa
+place(dry, bansuri([(0.0, "Ga", 0), (0.9, "Re", 0.18), (1.5, "Sa", 0.15), (2.25, "Dha_", 0.2), (2.75, "Sa", 0.22)], 3.3), 0.3, FL)
+# Phrase 2 (rising): Sa Re Ga . Pa~ Ga Re Ga
 place(
     dry,
-    bansuri([(0.0, "Ga", 0), (0.9, "Re", 0.18), (1.5, "Sa", 0.15), (2.25, "Dha_", 0.2), (2.75, "Sa", 0.22)], 3.3),
-    0.3,
-    0.13,
-    pan=0.0,
+    bansuri([(0.0, "Sa", 0), (0.35, "Re", 0.12), (0.7, "Ga", 0.12), (1.3, "Pa", 0.2), (1.9, "Ga", 0.15), (2.2, "Re", 0.12), (2.45, "Ga", 0.15)], 2.9, attack=0.25, release=0.6),
+    3.6,
+    FL,
 )
-
-# Swell as papers are pulled into the phone
-place(dry, riser(2.1), 3.25, 0.2, pan=0.1)
-
-# Checking the rules: soft santoor arpeggio Sa Re Ga Pa, twice
-for i, note in enumerate(["Sa", "Re", "Ga", "Pa", "Sa'", "Re", "Ga", "Pa"]):
-    place(dry, santoor(SA * 2 * R[note], 1.2, bright=0.6), 4.45 + i * 0.21, 0.13, pan=-0.45 + i * 0.12)
-
-# Major pad once the phone shows results
-place(dry, pad([SA, SA * R["Ga"], SA * R["Pa"], SA * 2], 3.8, attack=0.8, release=1.2), 6.0, 0.16)
-
-# One tick per scheme found: Ga, Pa, Dha, Sa' (rising), with a soft octave sparkle
-for i, note in enumerate(["Ga", "Pa", "Dha", "Sa'"]):
-    f = SA * 2 * R[note]
-    place(dry, santoor(f, 2.0), 6.55 + i * 0.45, 0.42, pan=-0.35 + i * 0.23)
-    place(dry, santoor(f * 2, 1.2, bright=0.4), 6.56 + i * 0.45, 0.1, pan=0.35 - i * 0.23)
-
-# Soft pulse under the results (tabla-like, on the beat of the ticks)
-for i, st in enumerate(np.arange(6.1, 9.3, 0.45)):
-    place(dry, thump(f0=86 if i % 2 == 0 else 110), st, 0.3 if i % 2 == 0 else 0.14)
-
-# Button appears
-place(dry, santoor(SA * 4 * R["Re"] / R["Sa"], 0.8, bright=0.5), 8.42, 0.14, pan=0.25)
-
-# Logo: low warm hit, full chord, bells, and the flute landing on high Sa
-place(dry, thump(2.0, f0=55, soft=3), 9.6, 0.7)
-place(dry, pad([SA / 2, SA, SA * R["Ga"], SA * R["Pa"], SA * 2, SA * 2 * R["Ga"]], 2.4, attack=0.12, release=1.8), 9.6, 0.42)
-place(dry, bell(SA * 4), 9.65, 0.3, pan=0.2)
-place(dry, bell(SA * 4 * R["Pa"]), 9.9, 0.14, pan=-0.25)
-place(dry, bansuri([(0.0, "Pa", 0), (0.45, "Sa'", 0.2)], 2.2), 9.75, 0.12, pan=0.0)
+# Phrase 3 (brighter): Pa Dha Sa' . Dha Pa . Ga Pa Dha
+place(
+    dry,
+    bansuri([(0.0, "Pa", 0), (0.35, "Dha", 0.12), (0.7, "Sa'", 0.18), (1.35, "Dha", 0.15), (1.7, "Pa", 0.15), (2.15, "Ga", 0.15), (2.45, "Pa", 0.12), (2.75, "Dha", 0.15)], 3.2, attack=0.25, release=0.5),
+    6.6,
+    FL,
+)
+# Landing on the logo: Dha~ Sa' held, fading out
+place(dry, bansuri([(0.0, "Dha", 0), (0.35, "Sa'", 0.25)], 2.15, attack=0.15, release=1.4), 9.8, FL * 1.05)
+# a soft lower flute an octave down doubling the landing, for warmth
+place(dry, bansuri([(0.0, "Pa", 0), (0.35, "Sa'", 0.25)], 2.1, attack=0.4, release=1.4) , 9.85, FL * 0.35, pan=-0.2)
 
 # ---------------------------------------------------------------- mix: reverb, EQ, glue, fades
 def reverb_ir(seconds=2.2, seed=0):
@@ -242,8 +227,8 @@ mix = np.stack([fft_filter(ch, lo=40, hi=12000) for ch in mix])
 mix /= np.max(np.abs(mix))
 mix = np.tanh(mix * 1.4) / np.tanh(1.4)
 
-# Fades so the looped video doesn't click
-fade = np.minimum(1, np.minimum((t / 0.9) ** 1.5, (DUR - t) / 0.8))
+# Short fade in, and a gentle fade out as the video stops on the logo
+fade = np.minimum(1, np.minimum((t / 0.6) ** 1.5, (DUR - t) / 1.2))
 mix *= fade
 mix /= np.max(np.abs(mix)) / 0.89  # about -1 dB peak
 

@@ -7,6 +7,7 @@ import "@fontsource/noto-sans-devanagari/devanagari-700.css";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { THEME_SCRIPT } from "@/components/ThemeToggle";
 import { LanguageProvider } from "@/lib/i18n";
 import { AuthProvider } from "@/lib/auth";
 import { DataProvider } from "@/lib/data-context";
@@ -19,7 +20,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#10214a",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#10214a" },
+    { media: "(prefers-color-scheme: dark)", color: "#060b1a" },
+  ],
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -30,7 +34,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   ]);
 
   return (
-    <html lang="en" className="h-full antialiased">
+    // suppressHydrationWarning: the theme script may add the "dark" class before React loads
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <DataProvider schemes={schemes} documents={documents}>
           <LanguageProvider>

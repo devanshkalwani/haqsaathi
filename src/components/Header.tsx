@@ -7,6 +7,7 @@ import { useLang, type UIKey } from "@/lib/i18n";
 import AccountButton from "./AccountButton";
 import LanguageToggle from "./LanguageToggle";
 import Logo, { Wordmark } from "./Logo";
+import ThemeToggle from "./ThemeToggle";
 
 const NAV: { href: string; key: UIKey; icon: LucideIcon; short?: UIKey }[] = [
   { href: "/dashboard", key: "nav_dashboard", icon: LayoutDashboard, short: "nav_home" },
@@ -24,13 +25,11 @@ export default function Header() {
   return (
     <>
       {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Logo />
-            <span className="hidden min-[360px]:inline">
-              <Wordmark />
-            </span>
+      <header className="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-3 sm:px-4">
+          <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="HaqSaathi">
+            <Logo size={34} />
+            <Wordmark className="text-lg sm:text-xl" />
           </Link>
 
           <nav className="hidden items-center gap-1 lg:flex">
@@ -39,7 +38,7 @@ export default function Header() {
                 key={n.href}
                 href={n.href}
                 className={`relative rounded-lg px-3.5 py-2 text-sm font-semibold transition ${
-                  isActive(n.href) ? "text-brand-900" : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                  isActive(n.href) ? "text-fg" : "text-muted hover:bg-surface-2 hover:text-fg"
                 }`}
               >
                 {t(n.key)}
@@ -48,15 +47,16 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <LanguageToggle />
+            <ThemeToggle />
             <AccountButton />
           </div>
         </div>
       </header>
 
       {/* Bottom bar for phones: easy to reach with a thumb */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-slate-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-line bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
         {NAV.map((n) => {
           const on = isActive(n.href);
           const Icon = n.icon;
@@ -64,9 +64,9 @@ export default function Header() {
             <Link
               key={n.href}
               href={n.href}
-              className={`flex flex-col items-center gap-1 py-2 text-[11px] font-semibold leading-tight ${on ? "text-brand-900" : "text-slate-500"}`}
+              className={`flex flex-col items-center gap-1 py-2 text-[11px] font-semibold leading-tight ${on ? "text-fg" : "text-muted"}`}
             >
-              <span className={`flex h-7 w-12 items-center justify-center rounded-full transition ${on ? "bg-accent-100 text-brand-900" : ""}`}>
+              <span className={`flex h-7 w-12 items-center justify-center rounded-full transition ${on ? "bg-accent-400/20 text-fg" : ""}`}>
                 <Icon className="h-5 w-5" strokeWidth={on ? 2.2 : 1.8} aria-hidden />
               </span>
               <span className="text-center">{t(n.short ?? n.key)}</span>

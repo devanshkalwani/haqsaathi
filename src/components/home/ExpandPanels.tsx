@@ -26,7 +26,7 @@ export default function ExpandPanels({ panels }: { panels: Panel[] }) {
             onClick={() => setActive(i)}
             aria-expanded={open}
             className={`group relative overflow-hidden rounded-3xl text-left transition-[flex-grow,background-color,box-shadow] duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)] lg:min-w-0 ${
-              open ? "bg-brand-950 text-white shadow-2xl shadow-brand-900/30 lg:flex-[3.2]" : "bg-white text-brand-950 ring-1 ring-slate-200 hover:ring-brand-200 lg:flex-1"
+              open ? "bg-brand-950 text-white shadow-2xl shadow-brand-900/30 ring-1 ring-white/5 lg:flex-[3.2]" : "bg-surface text-fg ring-1 ring-line hover:ring-line-strong lg:flex-1"
             }`}
           >
             {/* glow + grid only on the open panel */}
@@ -40,17 +40,17 @@ export default function ExpandPanels({ panels }: { panels: Panel[] }) {
               <div className="flex items-start justify-between gap-4">
                 <span
                   className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-colors duration-500 ${
-                    open ? "bg-accent-400 text-brand-950" : "bg-brand-50 text-brand-700 group-hover:bg-brand-100"
+                    open ? "bg-accent-400 text-brand-950" : "bg-tint text-link"
                   }`}
                 >
                   <Icon className="h-7 w-7" strokeWidth={1.7} />
                 </span>
-                <span className={`text-sm font-bold tabular-nums ${open ? "text-accent-400" : "text-slate-400"}`}>0{i + 1}</span>
+                <span className={`text-sm font-bold tabular-nums ${open ? "text-accent-400" : "text-muted"}`}>0{i + 1}</span>
               </div>
 
               <div>
                 <h3 className={`font-extrabold transition-all duration-500 ${open ? "text-2xl md:text-3xl" : "text-2xl lg:text-lg"}`}>{p.title}</h3>
-                <p className={`mt-1 ${open ? "text-brand-100/80" : "text-slate-500 lg:text-sm"}`}>{p.short}</p>
+                <p className={`mt-1 ${open ? "text-brand-100/80" : "text-muted lg:text-sm"}`}>{p.short}</p>
                 {/* body: always shown on phones, fades in on desktop when open */}
                 <div
                   className={`grid transition-[grid-template-rows,opacity] duration-700 lg:grid-rows-[0fr] lg:opacity-0 ${
@@ -58,7 +58,7 @@ export default function ExpandPanels({ panels }: { panels: Panel[] }) {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className={`mt-4 max-w-md text-lg leading-relaxed ${open ? "text-white" : "text-slate-600 lg:text-white"}`}>{p.body}</p>
+                    <p className={`mt-4 max-w-md text-lg leading-relaxed ${open ? "text-white" : "text-fg-2 lg:text-white"}`}>{p.body}</p>
                   </div>
                 </div>
               </div>
