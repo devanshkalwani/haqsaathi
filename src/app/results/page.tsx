@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import SchemeCard from "@/components/SchemeCard";
+import { EmptyState, PageHero, btn } from "@/components/ui";
 import { useData } from "@/lib/data-context";
 import { findEligible } from "@/lib/eligibility";
 import { useLang } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
 import type { Profile } from "@/lib/types";
-import { ClipboardList, MessagesSquare, Pencil } from "lucide-react";
+import { ArrowRight, BadgeCheck, ClipboardList, Info, MessagesSquare, Pencil } from "lucide-react";
 
 export default function ResultsPage() {
   const { t } = useLang();
@@ -24,12 +25,12 @@ export default function ResultsPage() {
 
   if (profile === null) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-20 text-center">
-        <ClipboardList className="h-12 w-12 text-brand-700" strokeWidth={1.5} />
-        <p className="mt-4 text-lg">{t("results_no_profile")}</p>
-        <Link href="/check" className="mt-6 inline-block rounded-2xl bg-brand-700 px-6 py-3 font-bold text-white">
-          {t("hero_cta")} →
-        </Link>
+      <div className="px-4 py-16">
+        <EmptyState icon={ClipboardList} title={t("results_title")} sub={t("results_no_profile")}>
+          <Link href="/check" className={btn.accent}>
+            {t("hero_cta")} <ArrowRight className="h-5 w-5" />
+          </Link>
+        </EmptyState>
       </div>
     );
   }
@@ -37,38 +38,47 @@ export default function ResultsPage() {
   const matches = findEligible(profile, SCHEMES);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <div className="rounded-3xl bg-gradient-to-br from-brand-700 to-brand-600 p-6 text-white md:p-8">
-        <p className="text-white/80">{t("results_title")}</p>
-        <h1 className="mt-1 text-3xl font-extrabold md:text-4xl">
-          {t("results_found")} {matches.length} {t("results_schemes")}
-        </h1>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <Link href="/check" className="rounded-xl bg-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/25">
-            <Pencil className="mr-1.5 inline h-4 w-4" />{t("edit_answers")}
+    <div>
+      <PageHero
+        icon={BadgeCheck}
+        eyebrow={t("results_title")}
+        title={
+          <>
+            {t("results_found")} <span className="text-accent-400">{matches.length}</span> {t("results_schemes")}
+          </>
+        }
+      >
+        <div className="flex flex-wrap gap-3">
+          <Link href="/checklist" className="inline-flex items-center gap-2 rounded-xl bg-accent-400 px-5 py-3 font-bold text-brand-950 transition hover:bg-accent-500">
+            <ClipboardList className="h-5 w-5" /> {t("nav_checklist")}
           </Link>
-          <Link href="/checklist" className="rounded-xl bg-accent-400 px-4 py-2 text-sm font-bold text-brand-900 hover:bg-accent-500">
-            <ClipboardList className="mr-1.5 inline h-4 w-4" />{t("nav_checklist")}
+          <Link href="/check" className="inline-flex items-center gap-2 rounded-xl border border-white/20 px-5 py-3 font-semibold text-white transition hover:bg-white/10">
+            <Pencil className="h-4 w-4" /> {t("edit_answers")}
           </Link>
         </div>
+      </PageHero>
+
+      <div className="mx-auto max-w-6xl px-4 pt-8">
+        <p className="flex gap-2.5 rounded-xl border border-accent-400/30 bg-warn-soft p-4 text-sm leading-relaxed text-warn-fg">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" /> {t("results_note")}
+        </p>
+
+        {matches.length === 0 ? (
+          <div className="mt-10">
+            <EmptyState icon={MessagesSquare} title={t("results_none")}>
+              <Link href="/ask" className={btn.primary}>
+                <MessagesSquare className="h-5 w-5" /> {t("nav_ask")}
+              </Link>
+            </EmptyState>
+          </div>
+        ) : (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {matches.map((s) => (
+              <SchemeCard key={s.id} scheme={s} eligible />
+            ))}
+          </div>
+        )}
       </div>
-
-      <p className="mt-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">ℹ️ {t("results_note")}</p>
-
-      {matches.length === 0 ? (
-        <div className="mt-10 text-center">
-          <p className="text-gray-600">{t("results_none")}</p>
-          <Link href="/ask" className="mt-4 inline-block rounded-2xl bg-brand-700 px-6 py-3 font-bold text-white">
-            <MessagesSquare className="mr-1.5 inline h-4 w-4" />{t("nav_ask")}
-          </Link>
-        </div>
-      ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {matches.map((s) => (
-            <SchemeCard key={s.id} scheme={s} eligible />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

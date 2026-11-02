@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSpeak, useSpeechInput } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
+import { PageHero } from "@/components/ui";
 import { FileText, Lock, MessagesSquare, Mic, Volume2 } from "lucide-react";
 
 type Msg = { role: "user" | "bot"; text: string; sources?: { id: string; name: string }[] };
@@ -66,28 +67,23 @@ export default function AskClient() {
   }, [messages, loading]);
 
   return (
-    <div className="mx-auto flex max-w-3xl flex-col px-4 py-6" style={{ minHeight: "calc(100vh - 4rem)" }}>
-      <div className="flex items-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-900 text-accent-400"><MessagesSquare className="h-6 w-6" /></span>
-        <div>
-          <h1 className="text-2xl font-extrabold">{t("ask_title")}</h1>
-          <p className="text-sm text-gray-500">{t("ask_sub")}</p>
-        </div>
-      </div>
+    <div className="flex flex-col" style={{ minHeight: "calc(100vh - 4rem)" }}>
+      <PageHero icon={MessagesSquare} title={t("ask_title")} sub={t("ask_sub")} narrow />
+      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-4">
 
       {/* Messages */}
-      <div className="mt-6 flex-1 space-y-4">
+      <div className="mt-8 flex-1 space-y-4">
         <Bubble role="bot" text={t("ask_hello")} />
 
         {messages.length === 0 && (
           <div>
-            <p className="mb-2 text-sm font-semibold text-gray-500">{t("ask_try")}:</p>
+            <p className="mb-3 text-sm font-semibold text-muted">{t("ask_try")}:</p>
             <div className="flex flex-wrap gap-2">
               {EXAMPLES[lang].map((e) => (
                 <button
                   key={e}
                   onClick={() => send(e)}
-                  className="rounded-full border border-brand-200 bg-white px-4 py-2 text-sm text-brand-800 hover:bg-brand-50"
+                  className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-medium text-fg-2 transition hover:border-link hover:text-link"
                 >
                   {e}
                 </button>
@@ -105,9 +101,9 @@ export default function AskClient() {
                   <Link
                     key={s.id}
                     href={`/schemes/${s.id}`}
-                    className="rounded-full bg-brand-100 px-3 py-1.5 text-xs font-semibold text-brand-800 hover:bg-brand-200"
+                    className="inline-flex items-center gap-1 rounded-full bg-tint px-3 py-1.5 text-xs font-semibold text-link transition hover:bg-line"
                   >
-                    <FileText className="mr-1 inline h-4 w-4" />{s.name} →
+                    <FileText className="h-3.5 w-3.5" />{s.name} →
                   </Link>
                 ))}
               </div>
@@ -115,27 +111,27 @@ export default function AskClient() {
           </div>
         ))}
 
-        {loading && <p className="animate-pulse text-sm text-gray-500">{t("ask_thinking")}</p>}
+        {loading && <p className="animate-pulse text-sm text-muted">{t("ask_thinking")}</p>}
         <div ref={endRef} />
       </div>
 
       {/* Input bar */}
-      <div className="sticky bottom-16 mt-6 md:bottom-4">
-        {mic.listening && <p className="mb-2 text-center text-sm font-semibold text-rose-600">{t("mic_listening")}</p>}
-        {!mic.supported && <p className="mb-2 text-center text-sm text-gray-500">{t("mic_unsupported")}</p>}
+      <div className="sticky bottom-16 mt-6 pb-2 md:bottom-4">
+        {mic.listening && <p className="mb-2 text-center text-sm font-semibold text-bad">{t("mic_listening")}</p>}
+        {!mic.supported && <p className="mb-2 text-center text-sm text-muted">{t("mic_unsupported")}</p>}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             send(input);
           }}
-          className="flex items-center gap-2 rounded-2xl border-2 border-gray-200 bg-white p-2 shadow-lg focus-within:border-brand-600"
+          className="flex items-center gap-2 rounded-2xl border-2 border-line-strong bg-surface p-2 shadow-xl shadow-brand-950/5 transition focus-within:border-link dark:shadow-black/30"
         >
           <button
             type="button"
             onClick={() => (mic.listening ? mic.stop() : mic.start())}
             aria-label="Voice input"
             className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-xl transition ${
-              mic.listening ? "animate-pulse bg-rose-500 text-white" : "bg-gray-100 hover:bg-gray-200"
+              mic.listening ? "animate-pulse bg-rose-500 text-white" : "bg-surface-2 text-fg-2 hover:bg-tint hover:text-link"
             }`}
           >
             <Mic className="h-5 w-5" />
@@ -144,17 +140,18 @@ export default function AskClient() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={t("ask_ph")}
-            className="min-w-0 flex-1 bg-transparent px-2 text-lg outline-none"
+            className="min-w-0 flex-1 bg-transparent px-2 text-lg text-fg outline-none placeholder:text-muted"
           />
           <button
             type="submit"
             disabled={!input.trim() || loading}
-            className="rounded-xl bg-brand-700 px-5 py-3 font-bold text-white hover:bg-brand-800 disabled:opacity-40"
+            className="rounded-xl bg-primary px-5 py-3 font-bold text-on-primary transition hover:bg-primary-hover disabled:opacity-40"
           >
             {t("ask_send")}
           </button>
         </form>
-        <p className="mt-2 text-center text-xs text-gray-500"><Lock className="mr-1 inline h-3.5 w-3.5" />{t("ask_warning")}</p>
+        <p className="mt-2 text-center text-xs text-muted"><Lock className="mr-1 inline h-3.5 w-3.5" />{t("ask_warning")}</p>
+      </div>
       </div>
     </div>
   );
@@ -166,12 +163,12 @@ function Bubble({ role, text, onListen, listenLabel }: { role: "user" | "bot"; t
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
         className={`max-w-[85%] whitespace-pre-line rounded-3xl px-5 py-3 ${
-          isUser ? "rounded-br-md bg-brand-700 text-white" : "rounded-bl-md border border-black/5 bg-white shadow-sm"
+          isUser ? "rounded-br-md bg-primary text-on-primary" : "rounded-bl-md border border-line bg-surface text-fg shadow-sm"
         }`}
       >
         {text}
         {onListen && (
-          <button onClick={onListen} className="mt-2 block text-xs font-semibold text-brand-700 hover:underline">
+          <button onClick={onListen} className="mt-2 block text-xs font-semibold text-link hover:underline">
             <Volume2 className="mr-1 inline h-4 w-4" />{listenLabel}
           </button>
         )}

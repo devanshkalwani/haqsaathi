@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useLang } from "@/lib/i18n";
 import { storage } from "@/lib/storage";
-import { Check } from "lucide-react";
+import { Check, ShieldCheck, Trash2 } from "lucide-react";
+import { PageHero, card } from "@/components/ui";
 
 const CONTENT = {
   en: {
@@ -37,26 +38,31 @@ export default function PrivacyPage() {
   const [done, setDone] = useState(false);
   const c = CONTENT[lang];
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="text-3xl font-extrabold">{c.title}</h1>
-      <ul className="mt-6 space-y-3">
-        {c.points.map((p) => (
-          <li key={p} className="flex gap-3 rounded-2xl border border-black/5 bg-white p-4">
-            <Check className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-            {p}
-          </li>
-        ))}
-      </ul>
-      <button
-        onClick={() => {
-          storage.clearAll();
-          window.dispatchEvent(new Event("hs-saved-change"));
-          setDone(true);
-        }}
-        className="mt-8 rounded-2xl border-2 border-rose-200 px-6 py-3 font-semibold text-rose-700 hover:bg-rose-50"
-      >
-        {done ? c.cleared : c.clear}
-      </button>
+    <div>
+      <PageHero icon={ShieldCheck} title={c.title} narrow />
+      <div className="mx-auto max-w-4xl px-4">
+        <ul className="mt-8 space-y-3">
+          {c.points.map((p) => (
+            <li key={p} className={`${card} flex gap-3 p-5 leading-relaxed text-fg-2`}>
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ok-soft text-ok">
+                <Check className="h-4 w-4" strokeWidth={3} />
+              </span>
+              {p}
+            </li>
+          ))}
+        </ul>
+        <button
+          onClick={() => {
+            storage.clearAll();
+            window.dispatchEvent(new Event("hs-saved-change"));
+            setDone(true);
+          }}
+          className="mt-8 inline-flex items-center gap-2 rounded-xl border-2 border-bad/40 px-6 py-3 font-semibold text-bad transition hover:bg-bad-soft"
+        >
+          {done ? <Check className="h-5 w-5" /> : <Trash2 className="h-5 w-5" />}
+          {done ? c.cleared : c.clear}
+        </button>
+      </div>
     </div>
   );
 }

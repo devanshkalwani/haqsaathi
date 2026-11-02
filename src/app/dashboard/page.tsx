@@ -7,6 +7,7 @@ import { useData } from "@/lib/data-context";
 import { findEligible } from "@/lib/eligibility";
 import { useLocalData } from "@/lib/hooks";
 import { useLang } from "@/lib/i18n";
+import { EmptyState, PageHero, btn, card } from "@/components/ui";
 import { ArrowRight, Award, BadgeCheck, Bookmark, Check, CloudOff, FileCheck2, ListChecks, MapPin, MessagesSquare, Pencil, SearchCheck, UserRound, type LucideIcon } from "lucide-react";
 
 /** The personal home for each user: what they qualify for, documents, and what to do next. */
@@ -35,27 +36,9 @@ export default function DashboardPage() {
   const displayName = name || (user?.email?.split("@")[0] ?? "");
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* Guest banner */}
-      {!user && available && (
-        <div className="mb-6 flex flex-col gap-3 rounded-xl border border-accent-100 bg-accent-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex items-start gap-2 text-slate-800"><CloudOff className="mt-0.5 h-5 w-5 shrink-0 text-accent-700" />{t("dash_guest_banner")}</p>
-          <Link href="/login" className="shrink-0 rounded-lg bg-brand-900 px-5 py-2.5 text-center font-semibold text-white hover:bg-brand-800">
-            {t("login")}
-          </Link>
-        </div>
-      )}
-
-      {/* Greeting */}
-      <section className="relative overflow-hidden rounded-2xl bg-brand-950 p-6 text-white md:p-10">
-        <div className="bg-grid pointer-events-none absolute inset-0" />
-        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-700/60 blur-[90px]" />
-        <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-brand-100/80">{t("dash_hello")},</p>
-            <h1 className="mt-1 text-3xl font-extrabold md:text-4xl">{displayName || t("guest")}</h1>
-            <p className="mt-2 text-brand-100/80">{t("dash_sub")}</p>
-          </div>
+    <div>
+      <PageHero eyebrow={`${t("dash_hello")},`} title={displayName || t("guest")} sub={t("dash_sub")}>
+        <div className="grid gap-3 sm:grid-cols-[auto_1fr]">
           {/* Progress ring */}
           <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4">
             <Ring value={doneSteps / steps.length} />
@@ -66,114 +49,146 @@ export default function DashboardPage() {
               <p className="text-sm text-brand-100/75">{t("dash_next")}</p>
             </div>
           </div>
+          <div className="grid grid-cols-3 gap-3">
+            <Stat value={eligible.length} label={t("dash_eligible")} icon={BadgeCheck} />
+            <Stat value={`${readyCount}/${neededDocs.length}`} label={t("dash_docs")} icon={FileCheck2} />
+            <Stat value={saved.length} label={t("dash_saved")} icon={Bookmark} />
+          </div>
         </div>
+      </PageHero>
 
-        <div className="relative mt-8 grid grid-cols-3 gap-3">
-          <Stat value={eligible.length} label={t("dash_eligible")} icon={BadgeCheck} />
-          <Stat value={`${readyCount}/${neededDocs.length}`} label={t("dash_docs")} icon={FileCheck2} />
-          <Stat value={saved.length} label={t("dash_saved")} icon={Bookmark} />
-        </div>
-      </section>
+      <div className="mx-auto max-w-6xl px-4 pt-6">
+        {/* Guest banner */}
+        {!user && available && (
+          <div className="mb-6 flex flex-col gap-3 rounded-2xl border border-accent-400/30 bg-warn-soft p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="flex items-start gap-2 text-fg-2">
+              <CloudOff className="mt-0.5 h-5 w-5 shrink-0 text-accent-500" />
+              {t("dash_guest_banner")}
+            </p>
+            <Link href="/login" className={`${btn.primary} shrink-0 py-2.5`}>
+              {t("login")}
+            </Link>
+          </div>
+        )}
 
-      {!profile ? (
-        /* First-time user: one big clear action */
-        <section className="mt-6 flex flex-col items-center rounded-2xl border border-slate-200 bg-white p-10 text-center">
-          <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50 text-brand-700"><SearchCheck className="h-8 w-8" strokeWidth={1.8} /></span>
-          <h2 className="mt-4 text-2xl font-extrabold">{t("dash_start_title")}</h2>
-          <p className="mt-2 max-w-md text-slate-600">{t("dash_start_sub")}</p>
-          <Link href="/check" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent-400 px-8 py-4 text-lg font-bold text-brand-950 hover:bg-accent-500">
-            {t("hero_cta")} <ArrowRight className="h-5 w-5" />
-          </Link>
-        </section>
-      ) : (
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
-          {/* Top benefits */}
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 lg:col-span-2">
-            <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-xl font-bold text-brand-950"><Award className="h-5 w-5 text-accent-500" />{t("dash_top")}</h2>
-              <Link href="/results" className="text-sm font-semibold text-brand-700 hover:underline">
-                {t("view_all")} →
-              </Link>
-            </div>
-            {eligible.length === 0 ? (
-              <p className="mt-4 text-gray-600">{t("results_none")}</p>
-            ) : (
-              <ul className="mt-4 space-y-3">
-                {eligible.slice(0, 5).map((s) => (
-                  <li key={s.id}>
-                    <Link
-                      href={`/schemes/${s.id}`}
-                      className="group flex items-center gap-4 rounded-xl border border-slate-200 p-4 transition hover:border-brand-300 hover:bg-brand-50/50"
-                    >
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                        {saved.includes(s.id) ? <Bookmark className="h-5 w-5 fill-current" /> : <Check className="h-5 w-5" strokeWidth={2.5} />}
+        {!profile ? (
+          /* First-time user: one big clear action */
+          <EmptyState icon={SearchCheck} title={t("dash_start_title")} sub={t("dash_start_sub")}>
+            <Link href="/check" className={`${btn.accent} px-8 py-4 text-lg`}>
+              {t("hero_cta")} <ArrowRight className="h-5 w-5" />
+            </Link>
+          </EmptyState>
+        ) : (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 [&>*]:min-w-0">
+            {/* Top benefits */}
+            <section className={`${card} p-6 lg:col-span-2`}>
+              <div className="flex items-center justify-between">
+                <CardTitle icon={Award}>{t("dash_top")}</CardTitle>
+                <Link href="/results" className="text-sm font-semibold text-link hover:underline">
+                  {t("view_all")} →
+                </Link>
+              </div>
+              {eligible.length === 0 ? (
+                <p className="mt-4 text-fg-2">{t("results_none")}</p>
+              ) : (
+                <ul className="mt-4 space-y-3">
+                  {eligible.slice(0, 5).map((s) => (
+                    <li key={s.id}>
+                      <Link
+                        href={`/schemes/${s.id}`}
+                        className="group flex items-center gap-4 rounded-xl border border-line p-4 transition hover:border-line-strong hover:bg-surface-2"
+                      >
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ok-soft text-ok">
+                          {saved.includes(s.id) ? <Bookmark className="h-5 w-5 fill-current" /> : <Check className="h-5 w-5" strokeWidth={2.5} />}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-bold text-fg">{tr(s.name)}</span>
+                          <span className="block truncate text-sm text-fg-2">{tr(s.benefit)}</span>
+                        </span>
+                        <ArrowRight className="h-5 w-5 text-link transition group-hover:translate-x-1" />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {/* Next steps */}
+            <section className={`${card} p-6`}>
+              <CardTitle icon={ListChecks}>{t("dash_next")}</CardTitle>
+              <ol className="mt-4 space-y-2">
+                {steps.map((s, i) => (
+                  <li key={s.label}>
+                    <Link href={s.href} className="flex items-center gap-3 rounded-xl p-3 transition hover:bg-surface-2">
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                          s.done ? "bg-ok text-white dark:text-brand-950" : "border-2 border-line-strong text-muted"
+                        }`}
+                      >
+                        {s.done ? <Check className="h-4 w-4" strokeWidth={3} /> : i + 1}
                       </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-bold">{tr(s.name)}</span>
-                        <span className="block truncate text-sm text-gray-600">{tr(s.benefit)}</span>
-                      </span>
-                      <ArrowRight className="h-5 w-5 text-brand-700 transition group-hover:translate-x-1" />
+                      <span className={s.done ? "text-muted line-through" : "font-medium text-fg"}>{s.label}</span>
                     </Link>
                   </li>
                 ))}
-              </ul>
-            )}
-          </section>
+              </ol>
+            </section>
 
-          {/* Next steps */}
-          <section className="rounded-2xl border border-slate-200 bg-white p-6">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-brand-950"><ListChecks className="h-5 w-5 text-accent-500" />{t("dash_next")}</h2>
-            <ol className="mt-4 space-y-2">
-              {steps.map((s, i) => (
-                <li key={s.label}>
-                  <Link href={s.href} className="flex items-center gap-3 rounded-xl p-3 transition hover:bg-gray-50">
-                    <span
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                        s.done ? "bg-emerald-600 text-white" : "border-2 border-slate-200 text-slate-500"
-                      }`}
-                    >
-                      {s.done ? <Check className="h-4 w-4" strokeWidth={3} /> : i + 1}
-                    </span>
-                    <span className={s.done ? "text-gray-400 line-through" : "font-medium"}>{s.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ol>
-          </section>
+            {/* Profile summary */}
+            <section className={`${card} p-6 lg:col-span-2`}>
+              <div className="flex items-center justify-between">
+                <CardTitle icon={UserRound}>{t("dash_profile")}</CardTitle>
+                <Link href="/check" className="inline-flex items-center gap-1 text-sm font-semibold text-link hover:underline">
+                  <Pencil className="h-3.5 w-3.5" />
+                  {t("edit")}
+                </Link>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Chip>
+                  {profile.age} {t("years")}
+                </Chip>
+                <Chip>{tr(GENDERS.find((g) => g.id === profile.gender)!.label)}</Chip>
+                <Chip>{tr(AREAS.find((a) => a.id === profile.area)!.label)}</Chip>
+                <Chip>
+                  <MapPin className="mr-1 h-3.5 w-3.5" />
+                  {profile.state}
+                </Chip>
+                <Chip>{tr(OCCUPATIONS.find((o) => o.id === profile.occupation)!.label)}</Chip>
+                <Chip>{tr(INCOMES.find((x) => x.id === profile.income)!.label)}</Chip>
+                <Chip>{tr(CATEGORIES.find((c) => c.id === profile.category)!.label)}</Chip>
+              </div>
+            </section>
 
-          {/* Profile summary */}
-          <section className="rounded-2xl border border-slate-200 bg-white p-6 lg:col-span-2">
-            <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-xl font-bold text-brand-950"><UserRound className="h-5 w-5 text-accent-500" />{t("dash_profile")}</h2>
-              <Link href="/check" className="text-sm font-semibold text-brand-700 hover:underline">
-                <Pencil className="mr-1 inline h-3.5 w-3.5" />{t("edit")}
-              </Link>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Chip>
-                {profile.age} {t("years")}
-              </Chip>
-              <Chip>{tr(GENDERS.find((g) => g.id === profile.gender)!.label)}</Chip>
-              <Chip>{tr(AREAS.find((a) => a.id === profile.area)!.label)}</Chip>
-              <Chip><MapPin className="mr-1 inline h-3.5 w-3.5" />{profile.state}</Chip>
-              <Chip>{tr(OCCUPATIONS.find((o) => o.id === profile.occupation)!.label)}</Chip>
-              <Chip>{tr(INCOMES.find((x) => x.id === profile.income)!.label)}</Chip>
-              <Chip>{tr(CATEGORIES.find((c) => c.id === profile.category)!.label)}</Chip>
-            </div>
-          </section>
-
-          {/* Ask */}
-          <Link
-            href="/ask"
-            className="group flex flex-col justify-between rounded-2xl bg-brand-900 p-6 text-white transition hover:bg-brand-800"
-          >
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-400 text-brand-950"><MessagesSquare className="h-6 w-6" /></span>
-            <span className="mt-4 text-lg font-bold">{t("dash_ask")}</span>
-            <span className="mt-2 inline-flex items-center gap-1 font-semibold text-accent-400">{t("nav_ask")} <ArrowRight className="h-4 w-4" /></span>
-          </Link>
-        </div>
-      )}
+            {/* Ask */}
+            <Link
+              href="/ask"
+              className="group relative isolate flex flex-col justify-between overflow-hidden rounded-2xl bg-brand-950 p-6 text-white ring-1 ring-white/5 transition hover:-translate-y-1"
+            >
+              <div className="bg-grid pointer-events-none absolute inset-0 -z-10" />
+              <div className="pointer-events-none absolute -right-16 -top-16 -z-10 h-48 w-48 rounded-full bg-brand-600/50 blur-[70px]" />
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-400 text-brand-950">
+                <MessagesSquare className="h-6 w-6" />
+              </span>
+              <span className="mt-4 text-lg font-bold">{t("dash_ask")}</span>
+              <span className="mt-2 inline-flex items-center gap-1 font-semibold text-accent-400">
+                {t("nav_ask")} <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+              </span>
+            </Link>
+          </div>
+        )}
+      </div>
     </div>
+  );
+}
+
+function CardTitle({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-3 text-xl font-bold text-fg">
+      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-tint text-link">
+        <Icon className="h-5 w-5" />
+      </span>
+      {children}
+    </h2>
   );
 }
 
@@ -213,5 +228,5 @@ function Ring({ value }: { value: number }) {
 }
 
 function Chip({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex items-center rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700">{children}</span>;
+  return <span className="inline-flex items-center rounded-lg border border-line bg-surface-2 px-3 py-1.5 text-sm font-medium text-fg-2">{children}</span>;
 }

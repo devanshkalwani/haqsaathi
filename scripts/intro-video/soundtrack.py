@@ -1,12 +1,16 @@
 """
 Soundtrack for the 12-second HaqSaathi intro, synthesised from scratch (no samples, no licences).
 
-Indian feel without being "government": a tanpura-style drone (Sa + Pa) under everything,
-paper-flutter noise while documents fly, a whoosh as they are pulled into the phone,
-santoor-like plucks on raag Bhupali notes (Sa Re Ga Pa) as each scheme gets a tick,
-and a warm resolving chord + bell when the logo appears.
+One calm, consistent voice from start to end: a bansuri (bamboo flute) melody in raag Bhupali
+(Sa Re Ga Pa Dha, Sa = D) over a soft tanpura drone and a warm, low string pad.
+No percussion, bells or sound effects, so nothing jumps out.
 
-Usage: python3 soundtrack.py out.wav
+  0.3-3.4   opening phrase, calm (the people who miss out)
+  3.7-6.4   the phrase rises (answering the questions)
+  6.7-9.6   brighter, reaching up (seeing the schemes, the documents)
+  9.9-12    the flute settles on high Sa as the logo appears, and fades
+
+Usage: python3 soundtrack.py out.wav   (needs numpy)
 """
 
 import sys
@@ -18,21 +22,14 @@ SR = 44100
 DUR = 12.0
 N = int(SR * DUR)
 t = np.arange(N) / SR
-rng = np.random.default_rng(7)
+rng = np.random.default_rng(11)
 
-SA = 146.83  # D3 as "Sa"
-RATIO = {"Sa": 1.0, "Re": 9 / 8, "Ga": 5 / 4, "Pa": 3 / 2, "Dha": 5 / 3}
-
-
-def env_adsr(n, a, d, s, r, sustain_len):
-    a, d, r = int(a * SR), int(d * SR), int(r * SR)
-    sl = max(0, int(sustain_len * SR))
-    e = np.concatenate([np.linspace(0, 1, a, endpoint=False), np.linspace(1, s, d, endpoint=False), np.full(sl, s), np.linspace(s, 0, r)])
-    return np.pad(e, (0, max(0, n - len(e))))[:n]
+SA = 146.83  # D3
+R = {"Dha_": 5 / 6, "Sa": 1.0, "Re": 9 / 8, "Ga": 5 / 4, "Pa": 3 / 2, "Dha": 5 / 3, "Sa'": 2.0, "Re'": 9 / 4}
 
 
+# ---------------------------------------------------------------- helpers
 def place(buf, sig, start, gain=1.0, pan=0.0):
-    """Mix a mono signal into the stereo buffer at `start` seconds with equal-power pan (-1..1)."""
     i = int(start * SR)
     if i >= N:
         return
@@ -42,139 +39,198 @@ def place(buf, sig, start, gain=1.0, pan=0.0):
     buf[1, i : i + len(sig)] += sig * rg
 
 
-def lowpass(x, cutoff):
-    """One-pole low-pass; cutoff may be a scalar or per-sample array (Hz)."""
-    c = np.broadcast_to(np.asarray(cutoff, dtype=float), x.shape)
-    a = 1 - np.exp(-2 * np.pi * c / SR)
-    y = np.empty_like(x)
-    acc = 0.0
-    for k in range(len(x)):
-        acc += a[k] * (x[k] - acc)
-        y[k] = acc
-    return y
+def fft_filter(x, lo=None, hi=None):
+    """Zero-phase band filter with soft edges (good enough for noise shaping and EQ)."""
+    X = np.fft.rfft(x)
+    f = np.fft.rfftfreq(len(x), 1 / SR)
+    g = np.ones_like(f)
+    if hi:
+        g *= 1 / (1 + (f / hi) ** 4)
+    if lo:
+        g *= 1 / (1 + (lo / np.maximum(f, 1e-3)) ** 4)
+    return np.fft.irfft(X * g, len(x))
 
 
-def tanpura_pluck(freq, length=3.2):
-    """Bright buzzy string (jawari): many harmonics, slow decay, the upper ones bloom then fade."""
+def smooth_env(n, attack, release):
+    tt = np.arange(n) / SR
+    a = np.clip(tt / attack, 0, 1)
+    r = np.clip((n / SR - tt) / release, 0, 1)
+    return np.sin(a * np.pi / 2) ** 2 * np.sin(r * np.pi / 2) ** 2
+
+
+# ---------------------------------------------------------------- instruments
+def tanpura(freq, length=3.6):
+    """Soft tanpura string: rich but rounded harmonics that bloom slowly (no harsh buzz)."""
     n = int(length * SR)
     tt = np.arange(n) / SR
     out = np.zeros(n)
-    for h in range(1, 18):
-        amp = (1 / h**0.9) * (1 + 0.6 * np.sin(np.pi * min(1, h / 12)))
-        bloom = 1 - np.exp(-tt * (2 + h * 0.6))
-        decay = np.exp(-tt * (0.7 + h * 0.12))
-        det = 1 + rng.normal(0, 0.0006)
-        out += amp * bloom * decay * np.sin(2 * np.pi * freq * h * det * tt + rng.random() * 6.28)
-    return out / 6
+    for h in range(1, 13):
+        amp = 1 / h**1.2
+        bloom = 1 - np.exp(-tt * (1.5 + h * 0.5))
+        decay = np.exp(-tt * (0.55 + h * 0.16))
+        out += amp * bloom * decay * np.sin(2 * np.pi * freq * h * (1 + rng.normal(0, 0.0004)) * tt + rng.random() * 6.28)
+    return out * np.clip(tt / 0.02, 0, 1) / 3
 
 
-def santoor(freq, length=1.8):
-    """Hammered double string: sharp attack, two slightly detuned courses, quick bright decay."""
+def santoor(freq, length=1.8, bright=1.0):
     n = int(length * SR)
     tt = np.arange(n) / SR
     out = np.zeros(n)
-    for course in (1.0, 1.0035):
-        for h, amp, dk in ((1, 1.0, 2.4), (2, 0.55, 3.5), (3, 0.3, 5.0), (4.2, 0.12, 8.0), (5.4, 0.06, 11.0)):
+    for course in (1.0, 1.003):
+        for h, amp, dk in ((1, 1.0, 2.2), (2, 0.45 * bright, 3.4), (3, 0.22 * bright, 5.0), (4.07, 0.08 * bright, 8.0)):
             out += amp * np.exp(-tt * dk) * np.sin(2 * np.pi * freq * course * h * tt)
-    click = rng.normal(0, 1, n) * np.exp(-tt * 180) * 0.25
-    return (out + click) * np.minimum(1, tt * 2000)
+    mallet = fft_filter(rng.normal(0, 1, n), lo=1500, hi=6000) * np.exp(-tt * 250) * 0.12
+    return (out + mallet) * np.clip(tt / 0.002, 0, 1) * 0.5
 
 
-def bell(freq, length=3.0):
+def bell(freq, length=3.5):
     n = int(length * SR)
     tt = np.arange(n) / SR
     out = np.zeros(n)
-    for ratio, amp, dk in ((1, 1, 1.1), (2.76, 0.45, 2.0), (5.4, 0.25, 3.5), (8.93, 0.1, 6)):
+    for ratio, amp, dk in ((1, 1, 0.9), (2.0, 0.35, 1.6), (2.76, 0.3, 2.2), (5.4, 0.12, 4), (8.93, 0.05, 7)):
         out += amp * np.exp(-tt * dk) * np.sin(2 * np.pi * freq * ratio * tt)
-    return out * np.minimum(1, tt * 800)
+    return out * np.clip(tt / 0.003, 0, 1) * 0.6
 
 
-def pad(freqs, length, a=0.8, r=1.5):
+def pad(freqs, length, attack=1.0, release=1.5):
+    """Warm string-like pad: detuned voices, low-passed, slow movement."""
     n = int(length * SR)
     tt = np.arange(n) / SR
     out = np.zeros(n)
     for f in freqs:
-        for det in (-0.004, 0, 0.004):
-            out += np.sin(2 * np.pi * f * (1 + det) * tt + 0.3 * np.sin(2 * np.pi * 0.2 * tt))
-            out += 0.25 * np.sin(2 * np.pi * 2 * f * (1 + det) * tt)
-    out /= len(freqs) * 3
-    return out * env_adsr(n, a, 0.4, 0.8, r, length - a - 0.4 - r)
+        for det in (-0.003, 0.0, 0.0035):
+            ph = 2 * np.pi * f * (1 + det) * tt + 0.15 * np.sin(2 * np.pi * 0.17 * tt + det * 900)
+            out += np.sin(ph) + 0.3 * np.sin(2 * ph) + 0.1 * np.sin(3 * ph)
+    out = fft_filter(out, hi=1800) / (len(freqs) * 3)
+    return out * smooth_env(n, attack, release)
 
 
-def thump(length=0.6, f0=95):
-    """Soft tabla-like 'dha' bass: sine with a falling pitch."""
+def bansuri(notes, length, attack=0.6, release=0.9):
+    """
+    Bamboo flute. `notes` = list of (start_s, note_name, glide_s); each note holds until the next.
+    Pitch glides (meend) between notes, delayed vibrato, breath noise that follows the tone.
+    """
     n = int(length * SR)
     tt = np.arange(n) / SR
-    f = f0 * (1 + 0.8 * np.exp(-tt * 30))
-    ph = 2 * np.pi * np.cumsum(f) / SR
-    return np.sin(ph) * np.exp(-tt * 7)
+    freq = np.zeros(n)
+    since = np.zeros(n)  # time since the current note started (for vibrato onset)
+    prev = None
+    for i, (st, name, glide) in enumerate(notes):
+        end = notes[i + 1][0] if i + 1 < len(notes) else length
+        a, b = int(st * SR), int(end * SR)
+        target = SA * 2 * R[name]
+        seg = np.full(b - a, target)
+        if prev is not None and glide > 0:
+            g = min(b - a, int(glide * SR))
+            x = np.linspace(0, 1, g)
+            seg[:g] = prev * (target / prev) ** (x * x * (3 - 2 * x))
+        freq[a:b] = seg
+        since[a:b] = np.arange(b - a) / SR
+        prev = target
+    vib_depth = 0.006 * np.clip((since - 0.35) / 0.4, 0, 1)
+    freq = freq * (1 + vib_depth * np.sin(2 * np.pi * 5.3 * tt))
+    ph = 2 * np.pi * np.cumsum(freq) / SR
+    tone = np.sin(ph) + 0.18 * np.sin(2 * ph) + 0.06 * np.sin(3 * ph)
+    breath = fft_filter(rng.normal(0, 1, n), lo=900, hi=3200)
+    breath /= np.max(np.abs(breath))
+    amp = np.ones(n)
+    for st, _, _ in notes[1:]:  # small dip at each new note, like a tongued articulation
+        amp *= 1 - 0.25 * np.exp(-(((tt - st) / 0.05) ** 2))
+    env = smooth_env(n, attack, release) * amp * (1 + 0.05 * np.sin(2 * np.pi * 0.7 * tt))
+    return (tone * 0.9 + breath * 0.1) * env
 
 
-mix = np.zeros((2, N))
+def thump(length=0.7, f0=88, soft=1.0):
+    """Tabla bayan-like bass: sine with a falling pitch and a soft attack."""
+    n = int(length * SR)
+    tt = np.arange(n) / SR
+    f = f0 * (1 + 0.6 * np.exp(-tt * 25))
+    s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt * 6) * np.clip(tt / (0.004 * soft), 0, 1)
+    return s
 
-# 1) Tanpura drone across the whole clip: Pa, Sa', Sa', Sa (low) every 0.8 s
-pattern = [SA * RATIO["Pa"] / 2, SA, SA, SA / 2]
-k = 0
-for start in np.arange(0, DUR, 0.8):
-    place(mix, tanpura_pluck(pattern[k % 4]), start, 0.3, pan=[-0.3, 0.2, 0.3, -0.1][k % 4])
-    k += 1
 
-# 2) Paper flutter while documents fly (0–5 s): band-limited noise in random bursts
-n_flut = int(5.2 * SR)
-noise = rng.normal(0, 1, n_flut)
-flutter_env = np.zeros(n_flut)
-for _ in range(70):
-    c = rng.uniform(0, 5.0)
-    w = rng.uniform(0.03, 0.12)
-    flutter_env += np.exp(-(((np.arange(n_flut) / SR) - c) / w) ** 2) * rng.uniform(0.3, 1)
-flutter = lowpass(noise, 3500) - lowpass(noise, 900)
-flutter *= flutter_env * np.minimum(1, np.arange(n_flut) / SR / 0.6) * np.clip((5.2 - np.arange(n_flut) / SR) / 1.2, 0, 1)
-place(mix, flutter, 0.0, 0.18, pan=0.3)
+def riser(length):
+    """Smooth airy swell: noise whose band opens up, plus a rising sine shimmer."""
+    n = int(length * SR)
+    tt = np.arange(n) / SR
+    x = tt / length
+    noise = rng.normal(0, 1, n)
+    out = np.zeros(n)
+    bands = [(200, 900), (500, 1800), (1000, 3200)]  # cross-fade bands = opening filter
+    for k, (lo, hi) in enumerate(bands):
+        w = np.clip(1 - np.abs(x * (len(bands) - 1) - k), 0, 1)
+        out += fft_filter(noise, lo=lo, hi=hi) * w
+    out /= np.max(np.abs(out))
+    shimmer = np.sin(2 * np.pi * np.cumsum(SA * 4 * (1 + 0.5 * x**2)) / SR) * 0.15
+    return (out * 0.8 + shimmer) * np.sin(np.pi * np.clip(x, 0, 1)) ** 2
 
-# A low, slightly tense pad under the "problem" (minor third colour), fading as the phone arrives
-place(mix, pad([SA / 2, SA * 6 / 5 / 2, SA * RATIO["Pa"] / 2], 4.4, a=1.2, r=1.6), 0.0, 0.16)
 
-# 3) Whoosh as the papers are pulled into the phone (3.4 → 5.2 s): rising filtered noise
-n_w = int(2.2 * SR)
-tw = np.arange(n_w) / SR
-whoosh = lowpass(rng.normal(0, 1, n_w), 300 + 4200 * (tw / 2.2) ** 2)
-whoosh *= np.sin(np.pi * np.clip(tw / 2.2, 0, 1)) ** 1.5
-place(mix, whoosh, 3.3, 0.55, pan=-0.2)
+# ---------------------------------------------------------------- arrangement
+dry = np.zeros((2, N))
 
-# 4) "Scanning" (4.3–6.2 s): soft rising plucks Sa Re Ga Pa, quiet
-for i, note in enumerate(["Sa", "Re", "Ga", "Pa", "Sa", "Re", "Ga", "Pa"]):
-    place(mix, santoor(SA * 2 * RATIO[note], 0.9), 4.35 + i * 0.22, 0.08, pan=-0.4 + i * 0.1)
+# Tanpura: Pa, Sa', Sa', Sa every 0.85 s, steady the whole way through
+pattern = [SA * R["Pa"] / 2, SA, SA, SA / 2]
+for k, st in enumerate(np.arange(0.0, DUR, 0.85)):
+    g = 0.24 * min(1.0, 0.55 + st / 1.5)
+    place(dry, tanpura(pattern[k % 4]), st, g, pan=[-0.35, 0.15, 0.3, -0.1][k % 4])
 
-# 5) One tick sound per scheme found (6.5, 6.95, 7.4, 7.85 s): santoor on Bhupali notes, rising
-for i, note in enumerate(["Ga", "Pa", "Dha", "Sa"]):
-    f = SA * 2 * RATIO[note] * (2 if note == "Sa" else 1)
-    place(mix, santoor(f), 6.55 + i * 0.45, 0.27, pan=-0.3 + i * 0.2)
-    place(mix, santoor(f * 2, 1.0), 6.55 + i * 0.45, 0.08, pan=0.3 - i * 0.2)
+# Warm pad under everything: open fifth, then a gentle major colour for the second half
+place(dry, pad([SA / 2, SA * R["Pa"] / 2, SA], 7.2, attack=1.6, release=2.0), 0.0, 0.2)
+place(dry, pad([SA / 2, SA, SA * R["Ga"], SA * R["Pa"]], 6.4, attack=2.0, release=2.4), 5.6, 0.16)
 
-# Light pulse under the results (6.2–9.4 s)
-for i, s in enumerate(np.arange(6.2, 9.4, 0.4)):
-    place(mix, thump(f0=90 if i % 2 == 0 else 120), s, 0.22 if i % 2 == 0 else 0.12)
+FL = 0.14  # flute level: the lead, but never loud
+# Phrase 1 (calm): Ga . Re~ Sa . Dha_ Sa
+place(dry, bansuri([(0.0, "Ga", 0), (0.9, "Re", 0.18), (1.5, "Sa", 0.15), (2.25, "Dha_", 0.2), (2.75, "Sa", 0.22)], 3.3), 0.3, FL)
+# Phrase 2 (rising): Sa Re Ga . Pa~ Ga Re Ga
+place(
+    dry,
+    bansuri([(0.0, "Sa", 0), (0.35, "Re", 0.12), (0.7, "Ga", 0.12), (1.3, "Pa", 0.2), (1.9, "Ga", 0.15), (2.2, "Re", 0.12), (2.45, "Ga", 0.15)], 2.9, attack=0.25, release=0.6),
+    3.6,
+    FL,
+)
+# Phrase 3 (brighter): Pa Dha Sa' . Dha Pa . Ga Pa Dha
+place(
+    dry,
+    bansuri([(0.0, "Pa", 0), (0.35, "Dha", 0.12), (0.7, "Sa'", 0.18), (1.35, "Dha", 0.15), (1.7, "Pa", 0.15), (2.15, "Ga", 0.15), (2.45, "Pa", 0.12), (2.75, "Dha", 0.15)], 3.2, attack=0.25, release=0.5),
+    6.6,
+    FL,
+)
+# Landing on the logo: Dha~ Sa' held, fading out
+place(dry, bansuri([(0.0, "Dha", 0), (0.35, "Sa'", 0.25)], 2.15, attack=0.15, release=1.4), 9.8, FL * 1.05)
+# a soft lower flute an octave down doubling the landing, for warmth
+place(dry, bansuri([(0.0, "Pa", 0), (0.35, "Sa'", 0.25)], 2.1, attack=0.4, release=1.4) , 9.85, FL * 0.35, pan=-0.2)
 
-# Warm major pad while results show
-place(mix, pad([SA, SA * RATIO["Ga"], SA * RATIO["Pa"]], 3.6, a=0.6, r=1.0), 6.2, 0.12)
+# ---------------------------------------------------------------- mix: reverb, EQ, glue, fades
+def reverb_ir(seconds=2.2, seed=0):
+    n = int(seconds * SR)
+    tt = np.arange(n) / SR
+    r = np.random.default_rng(seed)
+    ir = r.normal(0, 1, n) * np.exp(-tt * 6.9 / seconds)  # RT60 = seconds
+    ir = fft_filter(ir, lo=180, hi=5500)
+    ir[: int(0.012 * SR)] = 0  # pre-delay
+    return ir / np.sqrt(np.sum(ir**2))
 
-# 6) Button appears (8.4 s): small soft pop
-place(mix, santoor(SA * 4, 0.5), 8.42, 0.15)
 
-# 7) Logo (9.7 s): low boom + resolving chord + bell, fading to the end
-place(mix, thump(1.6, f0=60), 9.65, 0.85)
-place(mix, pad([SA / 2, SA, SA * RATIO["Ga"], SA * RATIO["Pa"], SA * 2], 2.35, a=0.15, r=1.6), 9.65, 0.45)
-place(mix, bell(SA * 4), 9.7, 0.32, pan=0.15)
-place(mix, bell(SA * 4 * RATIO["Pa"]), 9.95, 0.12, pan=-0.2)
+def convolve(x, ir):
+    m = len(x) + len(ir) - 1
+    size = 1 << (m - 1).bit_length()
+    return np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)[: len(x)]
 
-# Simple stereo room: two short delays, then gentle fades so the loop is seamless
-for d, g in ((0.031, 0.25), (0.047, 0.2), (0.21, 0.12)):
-    i = int(d * SR)
-    mix[0, i:] += mix[1, :-i] * g
-    mix[1, i:] += mix[0, :-i] * g
-fade = np.minimum(1, np.minimum(t / 0.25, (DUR - t) / 0.6))
+
+wet = np.stack([convolve(dry[0], reverb_ir(seed=1)), convolve(dry[1], reverb_ir(seed=2))])
+mix = dry * 0.82 + wet * 0.32
+
+# EQ: remove rumble below 40 Hz, tame the very top
+mix = np.stack([fft_filter(ch, lo=40, hi=12000) for ch in mix])
+
+# Glue: gentle soft-knee saturation after normalising
+mix /= np.max(np.abs(mix))
+mix = np.tanh(mix * 1.4) / np.tanh(1.4)
+
+# Short fade in, and a gentle fade out as the video stops on the logo
+fade = np.minimum(1, np.minimum((t / 0.6) ** 1.5, (DUR - t) / 1.2))
 mix *= fade
-mix /= np.max(np.abs(mix)) / 0.85  # normalise with headroom
+mix /= np.max(np.abs(mix)) / 0.89  # about -1 dB peak
 
 pcm = (mix.T * 32767).astype(np.int16)
 with wave.open(sys.argv[1] if len(sys.argv) > 1 else "intro.wav", "wb") as w:

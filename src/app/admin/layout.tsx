@@ -9,7 +9,7 @@ export const metadata = { title: "Admin | HaqSaathi", robots: { index: false } }
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <Suspense fallback={<p className="text-gray-500">Loading…</p>}>{children}</Suspense>
+      <Suspense fallback={<p className="text-muted">Loading…</p>}>{children}</Suspense>
     </div>
   );
 }

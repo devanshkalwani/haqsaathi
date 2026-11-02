@@ -3,13 +3,14 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import SchemeCard from "@/components/SchemeCard";
+import { EmptyState, PageHero } from "@/components/ui";
 import { SCHEME_CATEGORIES } from "@/data/options";
 import { useData } from "@/lib/data-context";
 import { useLang } from "@/lib/i18n";
 import { searchSchemes } from "@/lib/search";
 import type { SchemeCategory } from "@/lib/types";
 import OptionIcon from "@/components/Icon";
-import { Search } from "lucide-react";
+import { BookOpenText, Search, SearchX } from "lucide-react";
 
 export default function SchemesClient() {
   const initialCat = (useSearchParams().get("category") as SchemeCategory | null) ?? null;
@@ -26,45 +27,49 @@ export default function SchemesClient() {
   }, [query, category, SCHEMES]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-3xl font-extrabold">{t("nav_schemes")}</h1>
+    <div>
+      <PageHero icon={BookOpenText} title={t("nav_schemes")} sub={t("schemes_sub")}>
+        {/* Search */}
+        <div className="relative max-w-2xl">
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("search_ph")}
+            className="w-full rounded-2xl border-2 border-transparent bg-surface py-4 pl-12 pr-4 text-lg text-fg shadow-xl shadow-black/20 outline-none transition placeholder:text-muted focus:border-accent-400"
+          />
+        </div>
+      </PageHero>
 
-      {/* Search */}
-      <div className="relative mt-5">
-        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><Search className="h-5 w-5" /></span>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("search_ph")}
-          className="w-full rounded-2xl border-2 border-gray-200 bg-white py-4 pl-12 pr-4 text-lg outline-none focus:border-brand-600"
-        />
-      </div>
-
-      {/* Category filter chips */}
-      <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
-        <Chip active={category === null} onClick={() => setCategory(null)}>
-          {t("all")}
-        </Chip>
-        {SCHEME_CATEGORIES.map((c) => (
-          <Chip key={c.id} active={category === c.id} onClick={() => setCategory(c.id)}>
-            <OptionIcon id={c.id} className="h-4 w-4" /> {tr(c.label)}
+      <div className="mx-auto max-w-6xl px-4 pt-6">
+        {/* Category filter chips */}
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <Chip active={category === null} onClick={() => setCategory(null)}>
+            {t("all")}
           </Chip>
-        ))}
-      </div>
-
-      <p className="mt-4 text-sm text-gray-500">
-        {t("showing")} {list.length}
-      </p>
-
-      {list.length === 0 ? (
-        <p className="mt-10 text-center text-gray-600">{t("no_results")}</p>
-      ) : (
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {list.map((s) => (
-            <SchemeCard key={s.id} scheme={s} />
+          {SCHEME_CATEGORIES.map((c) => (
+            <Chip key={c.id} active={category === c.id} onClick={() => setCategory(c.id)}>
+              <OptionIcon id={c.id} className="h-4 w-4" /> {tr(c.label)}
+            </Chip>
           ))}
         </div>
-      )}
+
+        <p className="mt-4 text-sm font-medium text-muted">
+          {t("showing")} {list.length}
+        </p>
+
+        {list.length === 0 ? (
+          <div className="mt-8">
+            <EmptyState icon={SearchX} title={t("no_results")} />
+          </div>
+        ) : (
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {list.map((s) => (
+              <SchemeCard key={s.id} scheme={s} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -73,8 +78,9 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition ${
-        active ? "border-brand-700 bg-brand-700 text-white" : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+      aria-pressed={active}
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-semibold transition ${
+        active ? "border-primary bg-primary text-on-primary" : "border-line bg-surface text-fg-2 hover:border-line-strong hover:text-fg"
       }`}
     >
       {children}

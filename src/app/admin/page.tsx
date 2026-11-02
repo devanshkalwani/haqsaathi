@@ -20,7 +20,7 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
   if (!isDbConfigured || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return (
       <Shell>
-        <p className="rounded-xl bg-amber-50 p-4 text-amber-900">
+        <p className="rounded-xl bg-warn-soft p-4 text-warn-fg">
           The database is not connected yet. Follow <b>SETUP.md</b> to add your Supabase keys to <code>.env.local</code>.
         </p>
       </Shell>
@@ -53,24 +53,24 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
       <section id="reports" className="mt-8">
         <h2 className="text-xl font-bold">🚩 Open error reports</h2>
         {reports.length === 0 ? (
-          <p className="mt-2 text-gray-500">No open reports. 🎉</p>
+          <p className="mt-2 text-muted">No open reports. 🎉</p>
         ) : (
           <ul className="mt-3 space-y-2">
             {reports.map((r) => (
-              <li key={r.id} className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-black/5 bg-white p-4">
+              <li key={r.id} className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-line bg-surface p-4">
                 <div>
-                  <Link href={`/admin/schemes/${r.scheme_id}`} className="font-semibold text-brand-700 hover:underline">
+                  <Link href={`/admin/schemes/${r.scheme_id}`} className="font-semibold text-link hover:underline">
                     {r.scheme_id}
                   </Link>
                   <p className="mt-1">{r.message}</p>
-                  <p className="mt-1 text-xs text-gray-400">{new Date(r.created_at).toLocaleString("en-IN")}</p>
+                  <p className="mt-1 text-xs text-muted">{new Date(r.created_at).toLocaleString("en-IN")}</p>
                 </div>
                 <div className="flex gap-2">
                   {(["fixed", "ignored"] as const).map((status) => (
                     <form key={status} action={setReportStatus}>
                       <input type="hidden" name="id" value={r.id} />
                       <input type="hidden" name="status" value={status} />
-                      <button className="rounded-lg border px-3 py-1.5 text-sm font-semibold hover:bg-gray-50">
+                      <button className="rounded-lg border px-3 py-1.5 text-sm font-semibold hover:bg-surface-2">
                         {status === "fixed" ? "✓ Fixed" : "Ignore"}
                       </button>
                     </form>
@@ -86,13 +86,13 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
       <section className="mt-8">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold">📚 Schemes</h2>
-          <Link href="/admin/schemes/new" className="rounded-xl bg-brand-700 px-4 py-2 font-semibold text-white hover:bg-brand-800">
+          <Link href="/admin/schemes/new" className="rounded-xl bg-primary px-4 py-2 font-semibold text-on-primary hover:bg-primary-hover">
             + Add scheme
           </Link>
         </div>
-        <div className="mt-3 overflow-x-auto rounded-xl border border-black/5 bg-white">
+        <div className="mt-3 overflow-x-auto rounded-xl border border-line bg-surface">
           <table className="w-full text-left text-sm">
-            <thead className="bg-gray-50 text-gray-600">
+            <thead className="bg-surface-2 text-fg-2">
               <tr>
                 <th className="p-3">Name</th>
                 <th className="p-3">Level</th>
@@ -106,19 +106,19 @@ export default async function AdminDashboard({ searchParams }: PageProps<"/admin
               {schemes.map((s) => {
                 const old = daysOld(s.lastVerified) > DAYS_BEFORE_RECHECK;
                 return (
-                  <tr key={s.id} className="border-t border-gray-100">
+                  <tr key={s.id} className="border-t border-line">
                     <td className="p-3">
                       <p className="font-semibold">{s.name.en}</p>
-                      <p className="text-xs text-gray-400">{s.id}</p>
+                      <p className="text-xs text-muted">{s.id}</p>
                     </td>
                     <td className="p-3">{s.level === "central" ? "Central" : `${s.level} · ${s.state}`}</td>
                     <td className="p-3">{s.category}</td>
-                    <td className={`p-3 ${old ? "font-semibold text-rose-600" : ""}`}>
+                    <td className={`p-3 ${old ? "font-semibold text-bad" : ""}`}>
                       {s.lastVerified} {old && "⚠️"}
                     </td>
                     <td className="p-3">{s.isPublished ? "🟢 Live" : "⚪ Hidden"}</td>
                     <td className="p-3 text-right">
-                      <Link href={`/admin/schemes/${s.id}`} className="font-semibold text-brand-700 hover:underline">
+                      <Link href={`/admin/schemes/${s.id}`} className="font-semibold text-link hover:underline">
                         Edit
                       </Link>
                     </td>
@@ -139,7 +139,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-extrabold">🛠️ Admin</h1>
         <form action={logout}>
-          <button className="text-sm font-semibold text-gray-500 hover:text-rose-600">Log out</button>
+          <button className="text-sm font-semibold text-muted hover:text-bad">Log out</button>
         </form>
       </div>
       {children}
@@ -149,13 +149,13 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function Stat({ label, value, warn }: { label: string; value: number; warn?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-5 ${warn ? "border-rose-100 bg-rose-50" : "border-black/5 bg-white"}`}>
+    <div className={`rounded-2xl border p-5 ${warn ? "border-rose-100 bg-bad-soft" : "border-line bg-surface"}`}>
       <p className="text-3xl font-extrabold">{value}</p>
-      <p className="text-sm text-gray-600">{label}</p>
+      <p className="text-sm text-fg-2">{label}</p>
     </div>
   );
 }
 
 function Notice({ children }: { children: React.ReactNode }) {
-  return <p className="mb-4 rounded-xl bg-brand-50 p-3 font-semibold text-brand-800">{children}</p>;
+  return <p className="mb-4 rounded-xl bg-tint p-3 font-semibold text-link">{children}</p>;
 }
