@@ -28,7 +28,7 @@ import { useLang } from "@/lib/i18n";
 /** Home page text, in both languages. Kept short on purpose: the video and cards do the explaining. */
 const C = {
   en: {
-    badge: "Independent · Free · Hindi & English",
+    badge: "Complete scheme information, clearly explained",
     h1a: "Get the government benefits",
     h1b: "you deserve.",
     sub: "Answer 8 simple questions. See every scheme you qualify for, and exactly how to get it.",
@@ -39,7 +39,7 @@ const C = {
     storyEyebrow: "How it works",
     storyTitle: "From questions to benefits, in three steps",
     story: [
-      ["Answer 8 easy questions", "Tap or speak in Hindi or English. Age, work, family, income. Nothing secret, no Aadhaar number."],
+      ["Answer 8 easy questions", "Tap or speak. Age, work, family, income. Nothing secret, no Aadhaar number."],
       ["See what you qualify for", "HaqSaathi checks your answers against each scheme's official rules and shows how much you can get."],
       ["Get ready and apply", "An exact list of documents, simple steps, and the official link. No agents. No fees."],
     ],
@@ -48,7 +48,7 @@ const C = {
     railCount: ["scheme", "schemes"] as [string, string],
     cards: [
       ["Find", "Every scheme for you", "Answer 8 easy questions about your family. We check them against each scheme's official rules."],
-      ["Understand", "In simple words", "No legal language. Read or listen in Hindi or English: what you get, who can apply, and how."],
+      ["Understand", "In simple words", "No legal language. Read or listen: what you get, who can apply, and how."],
       ["Prepare", "The right documents", "An exact checklist of papers before you go, so your form is not rejected for a small mistake."],
       ["Apply", "On the official site", "Step-by-step help and the official government link. No agents. No fees."],
     ],
@@ -57,7 +57,7 @@ const C = {
     faq: "Questions? Read the FAQ",
   },
   hi: {
-    badge: "स्वतंत्र · मुफ्त · हिंदी और अंग्रेज़ी",
+    badge: "योजनाओं की पूरी जानकारी, साफ़ और आसान",
     h1a: "अपने हक़ की सरकारी योजनाएं",
     h1b: "आसानी से पाएं।",
     sub: "8 आसान सवालों के जवाब दें। देखें आप किन योजनाओं के पात्र हैं, और उन्हें कैसे पाएं।",
@@ -68,7 +68,7 @@ const C = {
     storyEyebrow: "यह कैसे काम करता है",
     storyTitle: "सवालों से लाभ तक, तीन कदम में",
     story: [
-      ["8 आसान सवालों के जवाब दें", "हिंदी या अंग्रेज़ी में टैप करें या बोलें। उम्र, काम, परिवार, आय। कोई गुप्त जानकारी नहीं, आधार नंबर नहीं।"],
+      ["8 आसान सवालों के जवाब दें", "टैप करें या बोलें। उम्र, काम, परिवार, आय। कोई गुप्त जानकारी नहीं, आधार नंबर नहीं।"],
       ["देखें आप किसके पात्र हैं", "हक़साथी आपके जवाबों को हर योजना के आधिकारिक नियमों से मिलाता है और बताता है कि कितना मिल सकता है।"],
       ["तैयारी करें और आवेदन करें", "दस्तावेज़ों की पूरी सूची, आसान कदम और आधिकारिक लिंक। कोई एजेंट नहीं। कोई फीस नहीं।"],
     ],
@@ -77,7 +77,7 @@ const C = {
     railCount: ["योजना", "योजनाएं"] as [string, string],
     cards: [
       ["खोजें", "आपकी हर योजना", "अपने परिवार के बारे में 8 आसान सवालों के जवाब दें। हम उन्हें हर योजना के आधिकारिक नियमों से मिलाते हैं।"],
-      ["समझें", "आसान भाषा में", "कोई कठिन कानूनी भाषा नहीं। हिंदी या अंग्रेज़ी में पढ़ें या सुनें: क्या मिलेगा, कौन आवेदन कर सकता है, कैसे।"],
+      ["समझें", "आसान भाषा में", "कोई कठिन कानूनी भाषा नहीं। पढ़ें या सुनें: क्या मिलेगा, कौन आवेदन कर सकता है, कैसे।"],
       ["तैयारी", "सही दस्तावेज़", "जाने से पहले कागज़ों की पूरी सूची, ताकि छोटी सी गलती पर फॉर्म रद्द न हो।"],
       ["आवेदन", "आधिकारिक साइट पर", "कदम-दर-कदम मदद और आधिकारिक सरकारी लिंक। कोई एजेंट नहीं। कोई फीस नहीं।"],
     ],

@@ -216,8 +216,8 @@ const CAPS = HI
     ];
 const capEl = document.getElementById("cap");
 const endEl = document.getElementById("end");
-document.getElementById("end-tag").textContent = HI ? "आपका हक़, अब आसान।" : "Your rights. Made simple.";
-document.getElementById("end-sub").textContent = HI ? "मुफ़्त · हिंदी और English · कोई बिचौलिया नहीं" : "Free · Hindi & English · No middlemen";
+document.getElementById("end-tag").textContent = HI ? "अपना हर हक़ जानें। पूरा और आसान।" : "Know every right you deserve. Fully.";
+document.getElementById("end-sub").textContent = HI ? "हर योजना की पूरी जानकारी, आपके लिए।" : "Every scheme, completely explained. Made for you.";
 document.body.style.fontFamily = FONT;
 
 function captions(t) {

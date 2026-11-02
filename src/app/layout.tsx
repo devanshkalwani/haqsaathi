@@ -15,7 +15,7 @@ import { getDocuments, getSchemes } from "@/lib/data";
 export const metadata: Metadata = {
   title: "HaqSaathi: find the benefits you deserve",
   description:
-    "Find government schemes you are eligible for, understand them in simple Hindi or English, and learn exactly how to apply. Independent project, not a government website.",
+    "Find government schemes you are eligible for, understand them fully in simple words, and learn exactly how to apply. Independent project, not a government website.",
 };
 
 export const viewport: Viewport = {

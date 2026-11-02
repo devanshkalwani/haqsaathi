@@ -22,8 +22,8 @@ const UI = {
   // Home
   hero_title: { en: "Find the government benefits you are eligible for", hi: "जानिए कौन-सी सरकारी योजनाओं के आप हक़दार हैं" },
   hero_sub: {
-    en: "Answer a few simple questions. We'll show your schemes, the documents you need, and exactly how to apply. Free, in Hindi and English.",
-    hi: "कुछ आसान सवालों के जवाब दें। हम आपकी योजनाएं, ज़रूरी दस्तावेज़ और आवेदन का तरीका बताएंगे। मुफ्त, हिंदी और अंग्रेज़ी में।",
+    en: "Answer a few simple questions. We'll show your schemes, the documents you need, and exactly how to apply. Complete information, in simple words.",
+    hi: "कुछ आसान सवालों के जवाब दें। हम आपकी योजनाएं, ज़रूरी दस्तावेज़ और आवेदन का तरीका बताएंगे। पूरी जानकारी, आसान भाषा में।",
   },
   hero_cta: { en: "Check my benefits", hi: "मेरे लाभ जांचें" },
   hero_cta_time: { en: "Takes 2 minutes", hi: "सिर्फ 2 मिनट" },
@@ -213,7 +213,7 @@ const UI = {
   },
   dash_start_title: { en: "Let's find your benefits", hi: "आइए आपके लाभ ढूंढें" },
   dash_start_sub: { en: "Answer 8 simple questions. It takes 2 minutes.", hi: "8 आसान सवालों के जवाब दें। सिर्फ 2 मिनट लगेंगे।" },
-  dash_ask: { en: "Have a question? Ask Saathi in Hindi or English.", hi: "कोई सवाल? हिंदी या अंग्रेज़ी में साथी से पूछें।" },
+  dash_ask: { en: "Have a question about a scheme? Ask Saathi.", hi: "किसी योजना के बारे में सवाल? साथी से पूछें।" },
   view_all: { en: "View all", hi: "सभी देखें" },
   edit: { en: "Edit", hi: "बदलें" },
   done: { en: "Done", hi: "पूरा" },
